@@ -17,7 +17,6 @@
   },
   "homepage": "https://github.com/marmelab/sketch-by-phone#readme",
   "dependencies": {
-    "three": "0.85.2"
   },
   "devDependencies": {
     "file-loader": "0.11.1",
