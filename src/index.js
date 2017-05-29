@@ -1,7 +1,20 @@
-function initializeRenderer() {
-    const renderer = new THREE.WebGLRenderer({ alpha: true });
+import {
+    Camera,
+    Color,
+    DoubleSide,
+    Group,
+    Mesh,
+    MeshPhongMaterial,
+    PlaneGeometry,
+    Scene,
+    TextureLoader,
+    WebGLRenderer,
+} from 'three';
 
-    renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+function initializeRenderer() {
+    const renderer = new WebGLRenderer({ alpha: true });
+
+    renderer.setClearColor(new Color('lightgrey'), 0)
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.domElement.style.position = 'absolute'
     renderer.domElement.style.top = '0px'
@@ -55,29 +68,29 @@ function startApp() {
     const renderer = initializeRenderer();
     document.body.appendChild(renderer.domElement);
 
-    const scene	= new THREE.Scene();
-    const camera = new THREE.Camera();
+    const scene	= new Scene();
+    const camera = new Camera();
     scene.add(camera);
 
-    const markerRoot = new THREE.Group();
+    const markerRoot = new Group();
     scene.add(markerRoot);
     const onRenderFcts = initializeArToolkit(renderer, markerRoot, camera);
 
-    const geometry = new THREE.PlaneGeometry(1, 1, 1);
-    const loader = new THREE.TextureLoader();
+    const geometry = new PlaneGeometry(1, 1, 1);
+    const loader = new TextureLoader();
     loader.crossOrigin = "";
 
     var img = loader.load('./assets/image.png');
-    var material = new THREE.MeshPhongMaterial({
+    var material = new MeshPhongMaterial({
         color: 0xffffff,
         map: img,
-        side: THREE.DoubleSide,
+        side: DoubleSide,
     });
 
-    var mesh = new THREE.Mesh(geometry, material);
+    var mesh = new Mesh(geometry, material);
     mesh.position.x	= geometry.parameters.width * 2;
     mesh.position.z	= geometry.parameters.height;
-    mesh.rotation.x = - Math.PI/2; // -90°
+    mesh.rotation.x = - Math.PI / 2; // -90°
     mesh.scale.x = 2;
     mesh.scale.y = 2;
 
