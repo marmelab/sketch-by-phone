@@ -1,16 +1,9 @@
-import {
-    Camera,
-    Color,
-    DoubleSide,
-    Group,
-    Mesh,
-    MeshPhongMaterial,
-    PlaneGeometry,
-    Scene,
-    TextureLoader,
-    WebGLRenderer,
-} from 'three';
+import './vendors/ar.min';
+import image from './assets/image.png';
+import cameraData from './assets/camera_para.dat';
+import hiro from './assets/patt.hiro';
 
+const { Camera, Color, DoubleSide, Group, Mesh, MeshPhongMaterial, PlaneGeometry, Scene, TextureLoader, WebGLRenderer } = THREE;
 function initializeRenderer() {
     const renderer = new WebGLRenderer({ alpha: true });
 
@@ -38,7 +31,7 @@ function initializeArToolkit(renderer, markerRoot, camera) {
 
     // create atToolkitContext
     const arToolkitContext = new THREEx.ArToolkitContext({
-        cameraParametersUrl: THREEx.ArToolkitContext.baseURL + './assets/camera_para.dat',
+        cameraParametersUrl: cameraData,
         detectionMode: 'mono',
         maxDetectionRate: 30,
         canvasWidth: 80 * 3,
@@ -58,7 +51,7 @@ function initializeArToolkit(renderer, markerRoot, camera) {
 
     const artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
         type : 'pattern',
-        patternUrl : THREEx.ArToolkitContext.baseURL + './assets/patt.hiro'
+        patternUrl : hiro,
     });
 
     return onRenderFcts;
@@ -80,7 +73,7 @@ function startApp() {
     const loader = new TextureLoader();
     loader.crossOrigin = "";
 
-    var img = loader.load('./assets/image.png');
+    var img = loader.load(image);
     var material = new MeshPhongMaterial({
         color: 0xffffff,
         map: img,
@@ -118,3 +111,5 @@ function startApp() {
     }
     requestAnimationFrame(animate);
 }
+
+startApp();
