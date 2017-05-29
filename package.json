@@ -1,0 +1,21 @@
+{
+  "name": "sketch-by-phone",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "http-server ./src",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": "git+https://github.com/marmelab/sketch-by-phone.git",
+  "keywords": [],
+  "author": "gildas <gildas.garcia@gmail.com>",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/marmelab/sketch-by-phone/issues"
+  },
+  "homepage": "https://github.com/marmelab/sketch-by-phone#readme",
+  "dependencies": {
+    "http-server": "^0.10.0"
+  }
+}
