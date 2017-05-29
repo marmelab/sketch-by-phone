@@ -1,7 +1,13 @@
-function initializeRenderer() {
-    const renderer = new THREE.WebGLRenderer({ alpha: true });
+import './vendors/ar.min';
+import image from './assets/image.png';
+import cameraData from './assets/camera_para.dat';
+import hiro from './assets/patt.hiro';
 
-    renderer.setClearColor(new THREE.Color('lightgrey'), 0)
+const { Camera, Color, DoubleSide, Group, Mesh, MeshPhongMaterial, PlaneGeometry, Scene, TextureLoader, WebGLRenderer } = THREE;
+function initializeRenderer() {
+    const renderer = new WebGLRenderer({ alpha: true });
+
+    renderer.setClearColor(new Color('lightgrey'), 0)
     renderer.setSize(window.innerWidth, window.innerHeight);
     renderer.domElement.style.position = 'absolute'
     renderer.domElement.style.top = '0px'
@@ -25,7 +31,7 @@ function initializeArToolkit(renderer, markerRoot, camera) {
 
     // create atToolkitContext
     const arToolkitContext = new THREEx.ArToolkitContext({
-        cameraParametersUrl: THREEx.ArToolkitContext.baseURL + './assets/camera_para.dat',
+        cameraParametersUrl: cameraData,
         detectionMode: 'mono',
         maxDetectionRate: 30,
         canvasWidth: 80 * 3,
@@ -45,7 +51,7 @@ function initializeArToolkit(renderer, markerRoot, camera) {
 
     const artoolkitMarker = new THREEx.ArMarkerControls(arToolkitContext, markerRoot, {
         type : 'pattern',
-        patternUrl : THREEx.ArToolkitContext.baseURL + './assets/patt.hiro'
+        patternUrl : hiro,
     });
 
     return onRenderFcts;
@@ -55,29 +61,29 @@ function startApp() {
     const renderer = initializeRenderer();
     document.body.appendChild(renderer.domElement);
 
-    const scene	= new THREE.Scene();
-    const camera = new THREE.Camera();
+    const scene	= new Scene();
+    const camera = new Camera();
     scene.add(camera);
 
-    const markerRoot = new THREE.Group();
+    const markerRoot = new Group();
     scene.add(markerRoot);
     const onRenderFcts = initializeArToolkit(renderer, markerRoot, camera);
 
-    const geometry = new THREE.PlaneGeometry(1, 1, 1);
-    const loader = new THREE.TextureLoader();
+    const geometry = new PlaneGeometry(1, 1, 1);
+    const loader = new TextureLoader();
     loader.crossOrigin = "";
 
-    var img = loader.load('./assets/image.png');
-    var material = new THREE.MeshPhongMaterial({
+    var img = loader.load(image);
+    var material = new MeshPhongMaterial({
         color: 0xffffff,
         map: img,
-        side: THREE.DoubleSide,
+        side: DoubleSide,
     });
 
-    var mesh = new THREE.Mesh(geometry, material);
+    var mesh = new Mesh(geometry, material);
     mesh.position.x	= geometry.parameters.width * 2;
     mesh.position.z	= geometry.parameters.height;
-    mesh.rotation.x = - Math.PI/2; // -90°
+    mesh.rotation.x = - Math.PI / 2; // -90°
     mesh.scale.x = 2;
     mesh.scale.y = 2;
 
@@ -105,3 +111,5 @@ function startApp() {
     }
     requestAnimationFrame(animate);
 }
+
+startApp();
