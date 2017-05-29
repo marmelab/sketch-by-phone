@@ -75,11 +75,11 @@ function startApp() {
     });
 
     var mesh = new THREE.Mesh(geometry, material);
-    mesh.position.x	= geometry.parameters.width * 5;
-    mesh.position.y	= -(geometry.parameters.height * 5);
-    mesh.rotation.x = -2; // This is most probably wrong, I arbitrarily set it to 2 after many tries
-    mesh.scale.x = 5;
-    mesh.scale.y = 5;
+    mesh.position.x	= geometry.parameters.width * 2;
+    mesh.position.z	= geometry.parameters.height;
+    mesh.rotation.x = - Math.PI/2; // -90°
+    mesh.scale.x = 2;
+    mesh.scale.y = 2;
 
     markerRoot.add(mesh);
 
