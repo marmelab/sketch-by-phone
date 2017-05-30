@@ -45,7 +45,7 @@ function initializeArToolkit(renderer, markerRoot, camera) {
 
     // update artoolkit on every frame
     const onRenderFcts = [() => {
-        if(arToolkitSource.ready === false)	return;
+        if(arToolkitSource.ready === false) return;
 
         arToolkitContext.update(arToolkitSource.domElement);
     }];
@@ -62,7 +62,7 @@ function startSketching(image) {
     const renderer = initializeRenderer();
     document.body.appendChild(renderer.domElement);
 
-    const scene	= new Scene();
+    const scene = new Scene();
     const camera = new Camera();
     scene.add(camera);
 
@@ -82,8 +82,8 @@ function startSketching(image) {
     });
 
     var mesh = new Mesh(geometry, material);
-    mesh.position.x	= geometry.parameters.width * 2;
-    mesh.position.z	= geometry.parameters.height;
+    mesh.position.x = geometry.parameters.width * 2;
+    mesh.position.z = geometry.parameters.height;
     mesh.rotation.x = - Math.PI / 2; // -90°
     mesh.scale.x = 2;
     mesh.scale.y = 2;
@@ -125,13 +125,13 @@ function startSketching(image) {
         panStartX = mesh.position.x;
         panStartY = mesh.position.z;
 
-        mesh.position.x	+= ev.deltaX / 200;
-        mesh.position.z	+= ev.deltaY / 200;
+        mesh.position.x += ev.deltaX / 200;
+        mesh.position.z += ev.deltaY / 200;
     });
 
     hammer.on('panmove', function(ev) {
-        mesh.position.x	= panStartX + ev.deltaX / 200;
-        mesh.position.z	= panStartY + ev.deltaY / 200;
+        mesh.position.x = panStartX + ev.deltaX / 200;
+        mesh.position.z = panStartY + ev.deltaY / 200;
     });
 
     let pinchStartX, pinchStartY;
@@ -156,7 +156,7 @@ function startSketching(image) {
     });
 
     hammer.on('rotatemove', function(ev) {
-        mesh.rotation.z	= rotateStart - degToRad(ev.rotation);
+        mesh.rotation.z = rotateStart - degToRad(ev.rotation);
     });
 }
 
