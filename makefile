@@ -6,3 +6,6 @@ start:
 
 build:
 	npm run build
+
+deploy: build
+	cd dist && now --public

@@ -3,6 +3,7 @@ import cameraData from './assets/camera_para.dat';
 import hiro from './assets/patt.hiro';
 
 const { Camera, Color, DoubleSide, Group, Mesh, MeshPhongMaterial, PlaneGeometry, Scene, TextureLoader, WebGLRenderer } = THREE;
+
 function initializeRenderer() {
     const renderer = new WebGLRenderer({ alpha: true });
 
@@ -109,6 +110,21 @@ function startSketching(image) {
         });
     }
     requestAnimationFrame(animate);
+
+    const root = document.getElementById('root');
+    const hammer = new Hammer(root);
+    hammer.on('swiperight', function(ev) {
+        mesh.scale.x += 1;
+        mesh.scale.y += 1;
+        mesh.position.x	= geometry.parameters.width * 2;
+        mesh.position.z	= geometry.parameters.height;
+    });
+    hammer.on('swipeleft', function(ev) {
+        mesh.scale.x -= 1;
+        mesh.scale.y -= 1;
+        mesh.position.x	= geometry.parameters.width * 2;
+        mesh.position.z	= geometry.parameters.height;
+    });
 }
 
 function startApp() {
