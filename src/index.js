@@ -1,5 +1,4 @@
 import './vendors/ar.min';
-import image from './assets/image.png';
 import cameraData from './assets/camera_para.dat';
 import hiro from './assets/patt.hiro';
 
@@ -57,7 +56,7 @@ function initializeArToolkit(renderer, markerRoot, camera) {
     return onRenderFcts;
 }
 
-function startApp() {
+function startSketching(image) {
     const renderer = initializeRenderer();
     document.body.appendChild(renderer.domElement);
 
@@ -110,6 +109,22 @@ function startApp() {
         });
     }
     requestAnimationFrame(animate);
+}
+
+function startApp() {
+    const form = document.getElementById('form');
+    const file_input = document.getElementById('file_input');
+
+    file_input.addEventListener('change', event => {
+        form.style.display = 'none';
+
+        var reader = new FileReader();
+        reader.addEventListener('load', () => {
+            startSketching(reader.result);
+        }, false);
+
+        reader.readAsDataURL(event.target.files[0]);
+    }, false);
 }
 
 startApp();
