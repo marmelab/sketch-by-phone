@@ -1,6 +1,7 @@
 import './vendors/ar.min';
 import cameraData from './assets/camera_para.dat';
 import hiro from './assets/patt.hiro';
+import degToRad from './utils/degToRad';
 
 const { Camera, Color, DoubleSide, Group, Mesh, MeshPhongMaterial, PlaneGeometry, Scene, TextureLoader, WebGLRenderer } = THREE;
 
@@ -115,7 +116,23 @@ function startSketching(image) {
     const hammer = new Hammer(root);
 
     hammer.get('pinch').set({ enable: true });
+    hammer.get('rotate').set({ enable: true });
     hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+
+    let panStartX, panStartY;
+
+    hammer.on('panstart', function(ev) {
+        panStartX = mesh.position.x;
+        panStartY = mesh.position.z;
+
+        mesh.position.x	+= ev.deltaX / 200;
+        mesh.position.z	+= ev.deltaY / 200;
+    });
+
+    hammer.on('panmove', function(ev) {
+        mesh.position.x	= panStartX + ev.deltaX / 200;
+        mesh.position.z	= panStartY + ev.deltaY / 200;
+    });
 
     let pinchStartX, pinchStartY;
 
@@ -131,19 +148,15 @@ function startSketching(image) {
         mesh.scale.y = pinchStartX * ev.scale;
     });
 
-    let panStartX, panStartY;
 
-    hammer.on('panstart', function(ev) {
-        panStartX = mesh.position.x;
-        panStartY = mesh.position.z;
+    let rotateStart, rotateOffset;
 
-        mesh.position.x	+= ev.deltaX / 200;
-        mesh.position.z	+= ev.deltaY / 200;
+    hammer.on('rotatestart', function(ev) {
+        rotateStart = mesh.rotation.z + degToRad(ev.rotation); // the first rotation is the angle between the two finger ignoring it.
     });
 
-    hammer.on('panmove', function(ev) {
-        mesh.position.x	= panStartX + ev.deltaX / 200;
-        mesh.position.z	= panStartY + ev.deltaY / 200;
+    hammer.on('rotatemove', function(ev) {
+        mesh.rotation.z	= rotateStart - degToRad(ev.rotation);
     });
 }
 
