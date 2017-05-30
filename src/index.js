@@ -7,17 +7,17 @@ const { Camera, Color, DoubleSide, Group, Mesh, MeshPhongMaterial, PlaneGeometry
 function initializeRenderer() {
     const renderer = new WebGLRenderer({ alpha: true });
 
-    renderer.setClearColor(new Color('lightgrey'), 0)
+    renderer.setClearColor(new Color('lightgrey'), 0);
     renderer.setSize(window.innerWidth, window.innerHeight);
-    renderer.domElement.style.position = 'absolute'
-    renderer.domElement.style.top = '0px'
-    renderer.domElement.style.left = '0px'
+    renderer.domElement.style.position = 'absolute';
+    renderer.domElement.style.top = '0px';
+    renderer.domElement.style.left = '0px';
 
     return renderer;
 }
 
 function initializeArToolkit(renderer, markerRoot, camera) {
-    THREEx.ArToolkitContext.baseURL = '../'
+    THREEx.ArToolkitContext.baseURL = '../';
     
     const arToolkitSource = new THREEx.ArToolkitSource({ sourceType : 'webcam' });
 
@@ -113,17 +113,37 @@ function startSketching(image) {
 
     const root = document.getElementById('root');
     const hammer = new Hammer(root);
-    hammer.on('swiperight', function(ev) {
-        mesh.scale.x += 1;
-        mesh.scale.y += 1;
-        mesh.position.x	= geometry.parameters.width * 2;
-        mesh.position.z	= geometry.parameters.height;
+
+    hammer.get('pinch').set({ enable: true });
+    hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+
+    let pinchStartX, pinchStartY;
+
+    hammer.on('pinchstart', function(ev) {
+        pinchStartX = mesh.scale.x;
+        pinchStartY = mesh.scale.y;
+        mesh.scale.x = ev.scale;
+        mesh.scale.y = ev.scale;
     });
-    hammer.on('swipeleft', function(ev) {
-        mesh.scale.x -= 1;
-        mesh.scale.y -= 1;
-        mesh.position.x	= geometry.parameters.width * 2;
-        mesh.position.z	= geometry.parameters.height;
+
+    hammer.on('pinch', function(ev) {
+        mesh.scale.x = pinchStartX * ev.scale;
+        mesh.scale.y = pinchStartX * ev.scale;
+    });
+
+    let panStartX, panStartY;
+
+    hammer.on('panstart', function(ev) {
+        panStartX = mesh.position.x;
+        panStartY = mesh.position.z;
+
+        mesh.position.x	+= ev.deltaX / 200;
+        mesh.position.z	+= ev.deltaY / 200;
+    });
+
+    hammer.on('panmove', function(ev) {
+        mesh.position.x	= panStartX + ev.deltaX / 200;
+        mesh.position.z	= panStartY + ev.deltaY / 200;
     });
 }
 
