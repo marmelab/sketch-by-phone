@@ -1,22 +1,24 @@
 import React, { Component } from 'react';
 import './FileSelection.css';
 import image from './assets/image.png';
+import getImageDataFromDataUrl from './utils/getImageDataFromDataUrl';
+
 
 class FileSelection extends Component {
     handleChange = (event) => {
         var reader = new FileReader();
         reader.addEventListener('load', () => {
-            this.props.onFileSelected(reader.result);
+            getImageDataFromDataUrl(reader.result).then(this.props.onFileSelected);
         }, false);
 
         reader.readAsDataURL(event.target.files[0]);
     }
 
     handleClick = () => {
-        this.props.onFileSelected(image);
+        getImageDataFromDataUrl(image).then(this.props.onFileSelected);
     }
 
-  render() {
+    render() {
         return (
             <div className="fileSelection container-fluid">
                 <div id="form">

@@ -4,7 +4,7 @@ import degToRad from './utils/degToRad';
 import initializeRenderer from './utils/initializeRenderer';
 import initializeArToolkit from './utils/initializeArToolkit';
 
-const { Camera, DoubleSide, Group, Mesh, MeshPhongMaterial, PlaneGeometry, Scene, TextureLoader } = THREE;
+const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, Texture } = THREE;
 
 class Sketch extends Component {
     componentDidMount() {
@@ -19,13 +19,11 @@ class Sketch extends Component {
         const onRenderFcts = initializeArToolkit(renderer, markerRoot, camera);
 
         const geometry = new PlaneGeometry(1, 1, 1);
-        const loader = new TextureLoader();
-        loader.crossOrigin = "";
-
-        var img = loader.load(this.props.image);
-        var material = new MeshPhongMaterial({
+        var texture = new Texture(this.props.image);
+        texture.needsUpdate = true;
+        var material = new MeshBasicMaterial({
             color: 0xffffff,
-            map: img,
+            map: texture,
             side: DoubleSide,
         });
 
@@ -111,7 +109,7 @@ class Sketch extends Component {
         this.canvas = node;
     }
 
-  render() {
+    render() {
         return (
             <canvas ref={this.storeRef} className="Sketch" />
         );
