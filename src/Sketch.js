@@ -11,14 +11,12 @@ import Settings from './Settings';
 const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, Texture } = THREE;
 
 class Sketch extends Component {
-    state = { 
+    state = {
         markerFound: false,
         opacity: 1,
+        detectEdge: false,
     };
 
-    constructor(props) {
-        super(props);
-    }
 
     renderer = null;
 
@@ -124,7 +122,7 @@ class Sketch extends Component {
 
         hammer.on('rotatemove', function(ev) {
             mesh.rotation.z = rotateStart - degToRad(ev.rotation);
-        });        
+        });
     }
 
     componentWillUnmount() {
@@ -137,6 +135,7 @@ class Sketch extends Component {
 
     handleOpacityChange = event =>
         this.setState({
+            ...this.state,
             opacity: event.target.value,
         });
 
@@ -145,8 +144,14 @@ class Sketch extends Component {
         window.location.reload();
     }
 
+    handleDetectEdgeChange = event =>
+        this.setState({
+            ...this.state,
+            detectEdge: event.target.value,
+        });
+
     render() {
-        const { markerFound, opacity } = this.state;
+        const { markerFound, opacity, detectEdge } = this.state;
         if (this.material) {
             this.material.opacity = opacity;
         }
@@ -160,8 +165,13 @@ class Sketch extends Component {
                         <img alt="Hiro marker example" src={hiro} />
                     </div>
                 }
-                <Settings opacity={opacity} onOpacityChange={this.handleOpacityChange} />
                 <button className="backButton btn" onClick={this.handleBack}>Back</button>
+                <Settings
+                    opacity={opacity}
+                    detectEdge={detectEdge}
+                    onOpacityChange={this.handleOpacityChange}
+                    onDetectEdgeChange={handleDetectEdgeChange}
+                />
             </div>
         );
     }
