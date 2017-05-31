@@ -8,4 +8,4 @@ build:
 	npm run build
 
 deploy:
-	now --public
+	now ./build --public

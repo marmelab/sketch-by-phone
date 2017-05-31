@@ -2,13 +2,16 @@ import React, { Component } from 'react';
 import './FileSelection.css';
 import image from './assets/image.png';
 import getImageDataFromDataUrl from './utils/getImageDataFromDataUrl';
+import detectEdge from './utils/detectEdge';
 
 
 class FileSelection extends Component {
     handleChange = (event) => {
         var reader = new FileReader();
         reader.addEventListener('load', () => {
-            getImageDataFromDataUrl(reader.result).then(this.props.onFileSelected);
+            getImageDataFromDataUrl(reader.result)
+                .then(detectEdge)
+                .then(this.props.onFileSelected);
         }, false);
 
         reader.readAsDataURL(event.target.files[0]);

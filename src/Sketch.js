@@ -4,7 +4,7 @@ import degToRad from './utils/degToRad';
 import initializeRenderer from './utils/initializeRenderer';
 import initializeArToolkit from './utils/initializeArToolkit';
 
-const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, Texture } = THREE;
+const { Camera, DoubleSide, Group, Mesh, MeshPhongMaterial, PlaneGeometry, Scene, Texture } = THREE;
 
 class Sketch extends Component {
     componentDidMount() {
@@ -21,9 +21,10 @@ class Sketch extends Component {
         const geometry = new PlaneGeometry(1, 1, 1);
         var texture = new Texture(this.props.image);
         texture.needsUpdate = true;
-        var material = new MeshBasicMaterial({
+        var material = new MeshPhongMaterial({
             color: 0xffffff,
             map: texture,
+            alphaMap: texture,
             side: DoubleSide,
         });
 
