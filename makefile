@@ -7,5 +7,5 @@ start:
 build:
 	npm run build
 
-deploy: build
-	cd dist && now --public
+deploy:
+	now --public
