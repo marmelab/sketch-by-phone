@@ -2,11 +2,14 @@
 import React, { Component } from 'react';
 import degToRad from './utils/degToRad';
 import initializeRenderer from './utils/initializeRenderer';
-import initializeArToolkit from './utils/initializeArToolkit';
+import { initializeArToolkit, getMarker } from './utils/arToolkit';
+import './Sketch.css';
 
 const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, Texture } = THREE;
 
 class Sketch extends Component {
+    state = { markerFound: false };
+
     componentDidMount() {
         const renderer = initializeRenderer(this.canvas);
 
@@ -16,7 +19,13 @@ class Sketch extends Component {
 
         const markerRoot = new Group();
         scene.add(markerRoot);
-        const onRenderFcts = initializeArToolkit(renderer, markerRoot, camera);
+        const onRenderFcts = [];
+        const arToolkitContext = initializeArToolkit(renderer, camera, onRenderFcts);
+        const marker = getMarker(arToolkitContext, markerRoot);
+
+        marker.addEventListener('markerFound', () => {
+            this.setState({ markerFound: true });
+        });
 
         const geometry = new PlaneGeometry(1, 1, 1);
         var texture = new Texture(this.props.image);
@@ -110,8 +119,13 @@ class Sketch extends Component {
     }
 
     render() {
+        const { markerFound } = this.state;
+
         return (
-            <canvas ref={this.storeRef} className="Sketch" />
+            <div>
+                <canvas ref={this.storeRef} />
+                {!markerFound && <div className="MarkerSearch">Looking for marker</div>}
+            </div>
         );
     }
 }

@@ -1,7 +1,10 @@
-.Sketch {
-    bottom: 0;
-    left: 0;
-    position: fixed;
-    right: 0;
-    top: 0;
+.MarkerSearch {
+    color: white;
+    background-color: blue;
+    font-weight: bold;
+    position: absolute;
+    bottom: 1rem;
+    left: 0rem;
+    width: 100%;
+    padding: 1rem 0.5rem;
 }

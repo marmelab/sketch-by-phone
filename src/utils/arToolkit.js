@@ -4,7 +4,7 @@ import hiro from '../assets/patt.hiro';
 
 const { ArMarkerControls, ArToolkitContext, ArToolkitSource } = THREEx;
 
-export default (renderer, markerRoot, camera) => {
+export function initializeArToolkit(renderer, camera, onRenderFcts) {
     ArToolkitContext.baseURL = '../';
     
     const arToolkitSource = new ArToolkitSource({ sourceType : 'webcam' });
@@ -31,16 +31,18 @@ export default (renderer, markerRoot, camera) => {
     });
 
     // update artoolkit on every frame
-    const onRenderFcts = [() => {
+    onRenderFcts.push(() => {
         if(arToolkitSource.ready === false) return;
 
         arToolkitContext.update(arToolkitSource.domElement);
-    }];
+    });
 
-    new ArMarkerControls(arToolkitContext, markerRoot, {
+    return arToolkitContext;
+}
+
+export function getMarker(arToolkitContext, markerRoot) {
+    return new ArMarkerControls(arToolkitContext, markerRoot, {
         type : 'pattern',
         patternUrl : hiro,
     });
-
-    return onRenderFcts;
 }
