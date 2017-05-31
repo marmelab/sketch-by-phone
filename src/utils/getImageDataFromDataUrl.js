@@ -1,7 +1,7 @@
 export default (dataUrl) =>
     new Promise((resolve, reject) => {
         try {
-            const img = new Image;
+            const img = new Image();
             img.onload = () => {
                 try {
                     const canvas = document.createElement('canvas');
