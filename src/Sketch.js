@@ -161,7 +161,7 @@ class Sketch extends Component {
                     </div>
                 }
                 <Settings opacity={opacity} onOpacityChange={this.handleOpacityChange} />
-                <button className="backButton" onClick={this.handleBack}>Back</button>
+                <button className="backButton btn" onClick={this.handleBack}>Back</button>
             </div>
         );
     }
