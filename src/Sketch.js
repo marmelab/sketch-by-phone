@@ -9,9 +9,13 @@ import hiro from './assets/hiro.png';
 const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, Texture } = THREE;
 
 class Sketch extends Component {
-    state = { markerFound: false };
+    state = { 
+        markerFound: false,
+        opacity: 0.5,
+    };
 
     componentDidMount() {
+        const { opacity } = this.state;
         const renderer = initializeRenderer(this.canvas);
 
         const scene = new Scene();
@@ -31,13 +35,14 @@ class Sketch extends Component {
         const geometry = new PlaneGeometry(1, 1, 1);
         var texture = new Texture(this.props.image);
         texture.needsUpdate = true;
-        var material = new MeshBasicMaterial({
+        this.material = new MeshBasicMaterial({
             color: 0xffffff,
             map: texture,
+            opacity,
             side: DoubleSide,
         });
 
-        var mesh = new Mesh(geometry, material);
+        var mesh = new Mesh(geometry, this.material);
         mesh.position.x = geometry.parameters.width * 2;
         mesh.position.z = geometry.parameters.height;
         mesh.rotation.x = - Math.PI / 2; // -90°
@@ -68,8 +73,7 @@ class Sketch extends Component {
         }
         requestAnimationFrame(animate);
 
-        const root = document.getElementById('root');
-        const hammer = new Hammer(root);
+        const hammer = new Hammer(this.canvas);
 
         hammer.get('pinch').set({ enable: true });
         hammer.get('rotate').set({ enable: true });
@@ -119,12 +123,29 @@ class Sketch extends Component {
         this.canvas = node;
     }
 
+    handleOpacityChange(event) {
+        this.setState({
+            opacity: event.target.value,
+        });
+    }
+
     render() {
-        const { markerFound } = this.state;
+        const { markerFound, opacity } = this.state;
+        if (this.material) {
+            this.material.opacity = this.state.opacity;
+        }
 
         return (
             <div>
-                <canvas ref={this.storeRef} />
+                <canvas id="root" ref={this.storeRef} className="Sketch" />
+                <input
+                    type="range"
+                    min="0" max="1"
+                    step="0.1"
+                    style={{ position: 'absolute' }}
+                    value={opacity}
+                    onChange={this.handleOpacityChange.bind(this)}
+                />
                 {!markerFound &&
                     <div className="MarkerSearch">
                         Looking for Hiro Marker
