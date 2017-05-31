@@ -19,3 +19,10 @@
     height: 5rem;
     width: 5rem;
 }
+
+.backButton {
+    z-index: 1000;
+    position: absolute;
+    right: 1rem;
+    top: 1rem;
+}
