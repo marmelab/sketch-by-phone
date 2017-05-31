@@ -1,3 +1,4 @@
+.PHONY: build
 install:
 	npm install
 
@@ -8,4 +9,4 @@ build:
 	npm run build
 
 deploy:
-	now --public
+	now ./build --public
