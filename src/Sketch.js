@@ -1,17 +1,27 @@
 /* globals Hammer, THREE */
 import React, { Component } from 'react';
+
 import degToRad from './utils/degToRad';
 import initializeRenderer from './utils/initializeRenderer';
 import { initializeArToolkit, getMarker } from './utils/arToolkit';
 import './Sketch.css';
 import hiro from './assets/hiro.png';
+import Settings from './Settings';
 
 const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, Texture } = THREE;
 
 class Sketch extends Component {
-    state = { markerFound: false };
+    state = { 
+        markerFound: false,
+        opacity: 1,
+    };
+
+    constructor(props) {
+        super(props);
+    }
 
     componentDidMount() {
+        const { opacity } = this.state;
         const renderer = initializeRenderer(this.canvas);
 
         const scene = new Scene();
@@ -31,13 +41,14 @@ class Sketch extends Component {
         const geometry = new PlaneGeometry(1, 1, 1);
         var texture = new Texture(this.props.image);
         texture.needsUpdate = true;
-        var material = new MeshBasicMaterial({
+        this.material = new MeshBasicMaterial({
             color: 0xffffff,
             map: texture,
+            opacity,
             side: DoubleSide,
         });
 
-        var mesh = new Mesh(geometry, material);
+        var mesh = new Mesh(geometry, this.material);
         mesh.position.x = geometry.parameters.width * 2;
         mesh.position.z = geometry.parameters.height;
         mesh.rotation.x = - Math.PI / 2; // -90°
@@ -68,8 +79,7 @@ class Sketch extends Component {
         }
         requestAnimationFrame(animate);
 
-        const root = document.getElementById('root');
-        const hammer = new Hammer(root);
+        const hammer = new Hammer(this.canvas);
 
         hammer.get('pinch').set({ enable: true });
         hammer.get('rotate').set({ enable: true });
@@ -119,18 +129,27 @@ class Sketch extends Component {
         this.canvas = node;
     }
 
+    handleOpacityChange = event =>
+        this.setState({
+            opacity: event.target.value,
+        });
+
     render() {
-        const { markerFound } = this.state;
+        const { markerFound, opacity } = this.state;
+        if (this.material) {
+            this.material.opacity = opacity;
+        }
 
         return (
             <div>
-                <canvas ref={this.storeRef} />
+                <canvas id="root" ref={this.storeRef} />
                 {!markerFound &&
                     <div className="MarkerSearch">
                         Looking for Hiro Marker
                         <img alt="Hiro marker example" src={hiro} />
                     </div>
                 }
+                <Settings opacity={opacity} onOpacityChange={this.handleOpacityChange} />
             </div>
         );
     }
