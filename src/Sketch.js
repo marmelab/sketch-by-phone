@@ -1,18 +1,25 @@
 /* globals Hammer, THREE */
 import React, { Component } from 'react';
+
 import degToRad from './utils/degToRad';
 import initializeRenderer from './utils/initializeRenderer';
 import { initializeArToolkit, getMarker } from './utils/arToolkit';
 import './Sketch.css';
 import hiro from './assets/hiro.png';
+import Settings from './Settings';
 
 const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, Texture } = THREE;
 
 class Sketch extends Component {
     state = { 
         markerFound: false,
-        opacity: 0.5,
+        opacity: 1,
     };
+
+    constructor(props) {
+        super(props);
+        this.handleOpacityChange = this.handleOpacityChange.bind(this);
+    }
 
     componentDidMount() {
         const { opacity } = this.state;
@@ -132,7 +139,7 @@ class Sketch extends Component {
     render() {
         const { markerFound, opacity } = this.state;
         if (this.material) {
-            this.material.opacity = this.state.opacity;
+            this.material.opacity = opacity;
         }
 
         return (
@@ -152,6 +159,7 @@ class Sketch extends Component {
                         <img alt="Hiro marker example" src={hiro} />
                     </div>
                 }
+                <Settings opacity={opacity} onOpacityChange={this.handleOpacityChange} />
             </div>
         );
     }
