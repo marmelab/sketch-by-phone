@@ -145,14 +145,6 @@ class Sketch extends Component {
         return (
             <div>
                 <canvas id="root" ref={this.storeRef} className="Sketch" />
-                <input
-                    type="range"
-                    min="0" max="1"
-                    step="0.1"
-                    style={{ position: 'absolute' }}
-                    value={opacity}
-                    onChange={this.handleOpacityChange.bind(this)}
-                />
                 {!markerFound &&
                     <div className="MarkerSearch">
                         Looking for Hiro Marker
