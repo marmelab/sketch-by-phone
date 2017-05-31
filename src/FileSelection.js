@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import './FileSelection.css';
 import image from './assets/image.png';
 import getImageDataFromDataUrl from './utils/getImageDataFromDataUrl';
-import detectEdge from './utils/detectEdge';
-
 
 class FileSelection extends Component {
     handleChange = (event) => {
