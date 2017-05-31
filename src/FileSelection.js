@@ -10,7 +10,6 @@ class FileSelection extends Component {
         var reader = new FileReader();
         reader.addEventListener('load', () => {
             getImageDataFromDataUrl(reader.result)
-                .then(detectEdge)
                 .then(this.props.onFileSelected);
         }, false);
 
