@@ -20,22 +20,15 @@ const styles = {
 };
 
 class Settings extends Component {
-    constructor(props) {
-        super(props);
-        this.state = {
-            open: false,
-        };
-        this.handleOpen = this.handleOpen.bind(this);
-        this.handleClose = this.handleClose.bind(this);
-    }
+    state = {
+        open: false,
+    };
 
-    handleOpen() {
+    handleOpen = () =>
         this.setState({ isOpen: true });
-    }
 
-    handleClose() {
+    handleClose = () =>
         this.setState({ isOpen: false });
-    }
 
     render() {
         const { isOpen } = this.state;

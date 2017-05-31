@@ -18,7 +18,6 @@ class Sketch extends Component {
 
     constructor(props) {
         super(props);
-        this.handleOpacityChange = this.handleOpacityChange.bind(this);
     }
 
     componentDidMount() {
@@ -130,11 +129,10 @@ class Sketch extends Component {
         this.canvas = node;
     }
 
-    handleOpacityChange(event) {
+    handleOpacityChange = event =>
         this.setState({
             opacity: event.target.value,
         });
-    }
 
     render() {
         const { markerFound, opacity } = this.state;
@@ -144,7 +142,7 @@ class Sketch extends Component {
 
         return (
             <div>
-                <canvas id="root" ref={this.storeRef} className="Sketch" />
+                <canvas id="root" ref={this.storeRef} />
                 {!markerFound &&
                     <div className="MarkerSearch">
                         Looking for Hiro Marker
