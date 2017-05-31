@@ -4,6 +4,7 @@ import degToRad from './utils/degToRad';
 import initializeRenderer from './utils/initializeRenderer';
 import { initializeArToolkit, getMarker } from './utils/arToolkit';
 import './Sketch.css';
+import hiro from './assets/hiro.png';
 
 const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, Texture } = THREE;
 
@@ -124,7 +125,12 @@ class Sketch extends Component {
         return (
             <div>
                 <canvas ref={this.storeRef} />
-                {!markerFound && <div className="MarkerSearch">Looking for marker</div>}
+                {!markerFound &&
+                    <div className="MarkerSearch">
+                        Looking for Hiro Marker
+                        <img alt="Hiro marker example" src={hiro} />
+                    </div>
+                }
             </div>
         );
     }
