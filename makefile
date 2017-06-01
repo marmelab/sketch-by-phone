@@ -8,5 +8,5 @@ start:
 build:
 	npm run build
 
-deploy:
+deploy: build
 	now ./build --public
