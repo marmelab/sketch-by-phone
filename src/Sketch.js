@@ -7,18 +7,20 @@ import { initializeArToolkit, getMarker } from './utils/arToolkit';
 import './Sketch.css';
 import hiro from './assets/hiro.png';
 import Settings from './Settings';
+import detectEdge from './utils/detectEdge';
 
 const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, Texture } = THREE;
 
 class Sketch extends Component {
-    state = { 
+    state = {
         markerFound: false,
         opacity: 1,
+        isDetectingEdge: false,
+        blur: 2,
+        highTreshold: 20,
+        lowTreshold: 50,
     };
 
-    constructor(props) {
-        super(props);
-    }
 
     renderer = null;
 
@@ -41,13 +43,17 @@ class Sketch extends Component {
         });
 
         const geometry = new PlaneGeometry(1, 1, 1);
-        var texture = new Texture(this.props.image);
+        const texture = new Texture(this.props.image);
         texture.needsUpdate = true;
+
+        const alphaTexture = new Texture(this.props.whiteImage);
+        texture.needsUpdate = true;
+
         this.material = new MeshBasicMaterial({
-            color: 0xffffff,
             map: texture,
             opacity,
             side: DoubleSide,
+            transparent: true,
         });
 
         var mesh = new Mesh(geometry, this.material);
@@ -124,11 +130,26 @@ class Sketch extends Component {
 
         hammer.on('rotatemove', function(ev) {
             mesh.rotation.z = rotateStart - degToRad(ev.rotation);
-        });        
+        });
     }
 
     componentWillUnmount() {
         this.renderer.dispose();
+    }
+
+    shouldComponentUpdate(nextProps, { markerFound, opacity, isDetectingEdge, blur, lowTreshold, highTreshold }) {
+        if (
+            markerFound !== this.state.markerFound ||
+            opacity !== this.state.opacity ||
+            isDetectingEdge !== this.state.isDetectingEdge ||
+            blur !== this.state.blur ||
+            lowTreshold !== this.state.lowTreshold ||
+            highTreshold !== this.state.highTreshold
+        ) {
+            return true;
+        }
+
+        return false;
     }
 
     storeRef = node => {
@@ -137,6 +158,7 @@ class Sketch extends Component {
 
     handleOpacityChange = event =>
         this.setState({
+            ...this.state,
             opacity: event.target.value,
         });
 
@@ -145,10 +167,52 @@ class Sketch extends Component {
         window.location.reload();
     }
 
+    handleDetectEdgeChange = () =>
+        this.setState({
+            ...this.state,
+            isDetectingEdge: !this.state.isDetectingEdge,
+        });
+
+    handleBlurChange = (event) =>
+        this.setState({
+            ...this.state,
+            blur: event.target.value,
+        });
+
+    handleLowTresholdChange = (event) => console.log(event.target.value) ||
+        this.setState({
+            ...this.state,
+            lowTreshold: event.target.value,
+        });
+
+    handleHighTresholdChange = (event) => console.log(event.target.value) ||
+        this.setState({
+            ...this.state,
+            highTreshold: event.target.value,
+        });
+
     render() {
-        const { markerFound, opacity } = this.state;
+        const { whiteImage, blackImage, image } = this.props;
+        const { markerFound, opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
         if (this.material) {
-            this.material.opacity = opacity;
+            if (isDetectingEdge) {
+                    this.material.opacity = 1;
+                    const alphaImage = detectEdge(image, { blur, lowTreshold, highTreshold });
+                    const alphaTexture = new Texture(alphaImage);
+                    alphaTexture.needsUpdate = true;
+                    this.material.alphaMap = alphaTexture;
+                    this.material.map.image = blackImage;
+                    this.material.map.image.needsUpdate = true;
+                    this.material.map.needsUpdate = true;
+                    this.material.needsUpdate = true;
+            } else {
+                this.material.opacity = opacity;
+                this.material.alphaMap = null;
+                const texture = new Texture(image);
+                texture.needsUpdate = true;
+                this.material.map = texture;
+                this.material.needsUpdate = true;
+            }
         }
 
         return (
@@ -160,8 +224,19 @@ class Sketch extends Component {
                         <img alt="Hiro marker example" src={hiro} />
                     </div>
                 }
-                <Settings opacity={opacity} onOpacityChange={this.handleOpacityChange} />
                 <button className="backButton btn" onClick={this.handleBack}>Back</button>
+                <Settings
+                    opacity={opacity}
+                    blur={blur}
+                    lowTreshold={lowTreshold}
+                    highTreshold={highTreshold}
+                    isDetectingEdge={isDetectingEdge}
+                    onOpacityChange={this.handleOpacityChange}
+                    onDetectEdgeChange={this.handleDetectEdgeChange}
+                    onBlurChange={this.handleBlurChange}
+                    onLowTresholdChange={this.handleLowTresholdChange}
+                    onHighTresholdChange={this.handleHighTresholdChange}
+                />
             </div>
         );
     }

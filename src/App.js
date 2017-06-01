@@ -7,18 +7,18 @@ class App extends Component {
         image: null,
     };
 
-    handleFileSelected = (image) => {
-        this.setState({ image });
+    handleFileSelected = ({ image, whiteImage, blackImage }) => {
+        this.setState({ image, whiteImage, blackImage });
     }
 
-  render() {
-        const { image } = this.state;
+    render() {
+        const { image, whiteImage, blackImage } = this.state;
 
         if (!image) {
             return <FileSelection onFileSelected={this.handleFileSelected} />;
         }
         return (
-            <Sketch image={image} />
+            <Sketch image={image} whiteImage={whiteImage} blackImage={blackImage} />
         );
     }
 }

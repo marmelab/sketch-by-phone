@@ -1,11 +1,6 @@
-
 import { imgproc, matrix_t, U8C1_t } from 'jsfeat';
 
-const blur = 2;
-const lowTreshold = 20;
-const highTreshold = 50;
-
-export default imageData => {
+export default (imageData, { blur = 2, lowTreshold = 20, highTreshold = 50 } = {}) => {
     let matrix = new matrix_t(imageData.width, imageData.height, U8C1_t);
     imgproc.grayscale(imageData.data, imageData.width, imageData.height, matrix);
 
@@ -15,8 +10,14 @@ export default imageData => {
 
     imgproc.canny(matrix, matrix, lowTreshold, highTreshold);
 
-    // put result back into imageData
-    var data_u32 = new Uint32Array(imageData.data.buffer);
+    const canvas = document.createElement('canvas');
+    canvas.width = imageData.width;
+    canvas.height = imageData.height;
+    const ctx = canvas.getContext('2d');
+    const newImageData = ctx.createImageData(imageData);
+
+    // put result into newImageData
+    var data_u32 = new Uint32Array(newImageData.data.buffer);
     var alpha = (0xff << 24);
     var i = matrix.cols*matrix.rows, pix = 0;
     while (--i >= 0) {
@@ -24,5 +25,5 @@ export default imageData => {
         data_u32[i] = alpha | (pix << 16) | (pix << 8) | pix;
     }
 
-    return imageData;
+    return newImageData;
 }
