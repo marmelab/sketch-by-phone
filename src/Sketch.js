@@ -20,9 +20,11 @@ class Sketch extends Component {
         super(props);
     }
 
+    renderer = null;
+
     componentDidMount() {
         const { opacity } = this.state;
-        const renderer = initializeRenderer(this.canvas);
+        const renderer = this.renderer = initializeRenderer(this.canvas);
 
         const scene = new Scene();
         const camera = new Camera();
@@ -125,6 +127,10 @@ class Sketch extends Component {
         });        
     }
 
+    componentWillUnmount() {
+        this.renderer.dispose();
+    }
+
     storeRef = node => {
         this.canvas = node;
     }
@@ -133,6 +139,11 @@ class Sketch extends Component {
         this.setState({
             opacity: event.target.value,
         });
+
+    handleBack = () => {
+        // We can't reset the AR.js created elements (no dispose, reset or destroy methods available)
+        window.location.reload();
+    }
 
     render() {
         const { markerFound, opacity } = this.state;
@@ -150,6 +161,7 @@ class Sketch extends Component {
                     </div>
                 }
                 <Settings opacity={opacity} onOpacityChange={this.handleOpacityChange} />
+                <button className="backButton btn" onClick={this.handleBack}>Back</button>
             </div>
         );
     }

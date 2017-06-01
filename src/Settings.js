@@ -3,8 +3,8 @@ import React, { Component } from 'react';
 const styles = {
     openButton: {
         position: 'absolute',
-        bottom: 0,
-        right: 0,
+        bottom: '1rem',
+        right: '1rem',
     },
     modal: {
         position: 'absolute',
@@ -33,7 +33,7 @@ class Settings extends Component {
     render() {
         const { isOpen } = this.state;
         if (!isOpen) {
-            return <button  className="btn" style={styles.openButton} onClick={this.handleOpen}>settings</button>
+            return <button className="btn" style={styles.openButton} onClick={this.handleOpen}>settings</button>
         }
 
         const { opacity, onOpacityChange } = this.props;
