@@ -16,11 +16,9 @@ class Sketch extends Component {
         markerFound: false,
         opacity: 1,
         isDetectingEdge: false,
-        detectOptions: {
-            blur: 2,
-            highTreshold: 20,
-            lowTreshold: 50,
-        },
+        blur: 2,
+        highTreshold: 20,
+        lowTreshold: 50,
     };
 
 
@@ -138,8 +136,15 @@ class Sketch extends Component {
         this.renderer.dispose();
     }
 
-    shouldComponentUpdate(nextProps, { markerFound, opacity, isDetectingEdge }) {
-        if (markerFound !== this.state.markerFound || opacity !== this.state.opacity || isDetectingEdge !== this.state.isDetectingEdge) {
+    shouldComponentUpdate(nextProps, { markerFound, opacity, isDetectingEdge, blur, lowTreshold, highTreshold }) {
+        if (
+            markerFound !== this.state.markerFound ||
+            opacity !== this.state.opacity ||
+            isDetectingEdge !== this.state.isDetectingEdge ||
+            blur !== this.state.blur ||
+            lowTreshold !== this.state.lowTreshold ||
+            highTreshold !== this.state.highTreshold
+        ) {
             return true;
         }
 
@@ -167,14 +172,33 @@ class Sketch extends Component {
             isDetectingEdge: !this.state.isDetectingEdge,
         });
 
+    handleBlurChange = (event) =>
+        this.setState({
+            ...this.state,
+            blur: event.target.value,
+        });
+
+    handleLowTresholdChange = (event) => console.log(event.target.value) ||
+        this.setState({
+            ...this.state,
+            lowTreshold: event.target.value,
+        });
+
+    handleHighTresholdChange = (event) => console.log(event.target.value) ||
+        this.setState({
+            ...this.state,
+            highTreshold: event.target.value,
+        });
+
     render() {
         const { whiteImage, blackImage, image } = this.props;
-        const { markerFound, opacity, isDetectingEdge, detectOptions } = this.state;
+        const { markerFound, opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
+        console.log('render');
         if (this.material) {
             this.material.opacity = opacity;
             this.material.needsUpdate;
             if (isDetectingEdge) {
-                    const alphaImage = detectEdge(image, detectOptions);
+                    const alphaImage = detectEdge(image, { blur, lowTreshold, highTreshold });
                     const alphaTexture = new Texture(alphaImage);
                     alphaTexture.needsUpdate = true;
                     this.material.alphaMap = alphaTexture;
@@ -203,9 +227,15 @@ class Sketch extends Component {
                 <button className="backButton btn" onClick={this.handleBack}>Back</button>
                 <Settings
                     opacity={opacity}
+                    blur={blur}
+                    lowTreshold={lowTreshold}
+                    highTreshold={highTreshold}
                     isDetectingEdge={isDetectingEdge}
                     onOpacityChange={this.handleOpacityChange}
                     onDetectEdgeChange={this.handleDetectEdgeChange}
+                    onBlurChange={this.handleBlurChange}
+                    onLowTresholdChange={this.handleLowTresholdChange}
+                    onHighTresholdChange={this.handleHighTresholdChange}
                 />
             </div>
         );

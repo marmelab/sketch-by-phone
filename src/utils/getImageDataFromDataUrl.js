@@ -12,7 +12,6 @@ export default (dataUrl) =>
                     const whiteImage = ctx.createImageData(img.width, img.height);
                     whiteImage.data.fill(255);
 
-
                     const blackImage = ctx.createImageData(img.width, img.height);
                     for (var i=0;i<blackImage.data.length;i+=4) {
                         blackImage.data[i+0]=0;

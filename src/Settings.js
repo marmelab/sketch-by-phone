@@ -36,7 +36,18 @@ class Settings extends Component {
             return <button className="btn" style={styles.openButton} onClick={this.handleOpen}>settings</button>
         }
 
-        const { opacity, isDetectingEdge, onOpacityChange, onDetectEdgeChange } = this.props;
+        const {
+            blur,
+            lowTreshold,
+            highTreshold,
+            opacity,
+            isDetectingEdge,
+            onBlurChange,
+            onLowTresholdChange,
+            onHighTresholdChange,
+            onOpacityChange,
+            onDetectEdgeChange
+        } = this.props;
 
         return (
             <div style={styles.modal}>
@@ -48,7 +59,7 @@ class Settings extends Component {
                         className="form-control"
                         name="opacity"
                         type="range"
-                        min="0" 
+                        min="0"
                         max="1"
                         step="0.01"
                         value={opacity}
@@ -66,7 +77,58 @@ class Settings extends Component {
                         /> detect edge
                     </label>
                 </div>
-                <button 
+                {
+                    isDetectingEdge && (
+                        <div>
+                            <div class="form-group" style={styles.modalItem} >
+                                <label for="blur" >
+                                    blur
+                                </label>
+                                <input
+                                    className="form-control"
+                                    name="blur"
+                                    type="range"
+                                    min="0"
+                                    max="12"
+                                    step="1"
+                                    value={blur}
+                                    onChange={onBlurChange}
+                                />
+                            </div>
+                            <div class="form-group" style={styles.modalItem} >
+                                <label for="lowTreshold" >
+                                    low treshold
+                                </label>
+                                <input
+                                    className="form-control"
+                                    name="lowTreshold"
+                                    type="range"
+                                    min="1"
+                                    max="127"
+                                    step="1"
+                                    value={lowTreshold}
+                                    onChange={onLowTresholdChange}
+                                />
+                            </div>
+                            <div class="form-group" style={styles.modalItem} >
+                                <label for="highTreshold" >
+                                    high treshold
+                                </label>
+                                <input
+                                    className="form-control"
+                                    name="highTreshold"
+                                    type="range"
+                                    min="1"
+                                    max="127"
+                                    step="1"
+                                    value={highTreshold}
+                                    onChange={onHighTresholdChange}
+                                />
+                            </div>
+                        </div>
+                    )
+                }
+                <button
                     className="btn btn-block"
                     onClick={this.handleClose}
                 >close</button>
