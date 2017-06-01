@@ -53,6 +53,7 @@ class Sketch extends Component {
             map: texture,
             opacity,
             side: DoubleSide,
+            transparent: true,
         });
 
         var mesh = new Mesh(geometry, this.material);
@@ -193,11 +194,9 @@ class Sketch extends Component {
     render() {
         const { whiteImage, blackImage, image } = this.props;
         const { markerFound, opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
-        console.log('render');
         if (this.material) {
-            this.material.opacity = opacity;
-            this.material.needsUpdate;
             if (isDetectingEdge) {
+                    this.material.opacity = 1;
                     const alphaImage = detectEdge(image, { blur, lowTreshold, highTreshold });
                     const alphaTexture = new Texture(alphaImage);
                     alphaTexture.needsUpdate = true;
@@ -207,6 +206,7 @@ class Sketch extends Component {
                     this.material.map.needsUpdate = true;
                     this.material.needsUpdate = true;
             } else {
+                this.material.opacity = opacity;
                 this.material.alphaMap = null;
                 const texture = new Texture(image);
                 texture.needsUpdate = true;
