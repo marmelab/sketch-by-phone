@@ -134,7 +134,7 @@ class Settings extends Component {
                             className="form-check-input"
                             name="isDetectingEdge"
                             type="checkbox"
-                            value={isDetectingEdge}
+                            checked={isDetectingEdge ? 'checked' : ''}
                             onChange={onDetectEdgeChange}
                         /> detect edge
                     </label>
