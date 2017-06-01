@@ -36,7 +36,7 @@ class Settings extends Component {
             return <button className="btn" style={styles.openButton} onClick={this.handleOpen}>settings</button>
         }
 
-        const { opacity, detectEdge, onOpacityChange, onDetectEdgeChange } = this.props;
+        const { opacity, isDetectingEdge, onOpacityChange, onDetectEdgeChange } = this.props;
 
         return (
             <div style={styles.modal}>
@@ -56,12 +56,12 @@ class Settings extends Component {
                     />
                 </div>
                 <div class="form-check" style={styles.modalItem} >
-                    <label for="detectEdge" className="form-check-label">
+                    <label for="isDetectingEdge" className="form-check-label">
                         <input
                             className="form-check-input"
-                            name="detectEdge"
+                            name="isDetectingEdge"
                             type="checkbox"
-                            value={detectEdge}
+                            value={isDetectingEdge}
                             onChange={onDetectEdgeChange}
                         /> detect edge
                     </label>

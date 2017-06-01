@@ -15,7 +15,8 @@ class FileSelection extends Component {
     }
 
     handleClick = () => {
-        getImageDataFromDataUrl(image).then(this.props.onFileSelected);
+        getImageDataFromDataUrl(image)
+            .then(this.props.onFileSelected);
     }
 
     render() {

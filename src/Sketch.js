@@ -7,6 +7,7 @@ import { initializeArToolkit, getMarker } from './utils/arToolkit';
 import './Sketch.css';
 import hiro from './assets/hiro.png';
 import Settings from './Settings';
+import detectEdge from './utils/detectEdge';
 
 const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, Texture } = THREE;
 
@@ -14,7 +15,12 @@ class Sketch extends Component {
     state = {
         markerFound: false,
         opacity: 1,
-        detectEdge: false,
+        isDetectingEdge: false,
+        detectOptions: {
+            blur: 2,
+            highTreshold: 20,
+            lowTreshold: 50,
+        },
     };
 
 
@@ -39,10 +45,13 @@ class Sketch extends Component {
         });
 
         const geometry = new PlaneGeometry(1, 1, 1);
-        var texture = new Texture(this.props.image);
+        const texture = new Texture(this.props.image);
         texture.needsUpdate = true;
+
+        const alphaTexture = new Texture(this.props.whiteImage);
+        texture.needsUpdate = true;
+
         this.material = new MeshBasicMaterial({
-            color: 0xffffff,
             map: texture,
             opacity,
             side: DoubleSide,
@@ -129,6 +138,14 @@ class Sketch extends Component {
         this.renderer.dispose();
     }
 
+    shouldComponentUpdate(nextProps, { markerFound, opacity, isDetectingEdge }) {
+        if (markerFound !== this.state.markerFound || opacity !== this.state.opacity || isDetectingEdge !== this.state.isDetectingEdge) {
+            return true;
+        }
+
+        return false;
+    }
+
     storeRef = node => {
         this.canvas = node;
     }
@@ -144,16 +161,34 @@ class Sketch extends Component {
         window.location.reload();
     }
 
-    handleDetectEdgeChange = event =>
+    handleDetectEdgeChange = () =>
         this.setState({
             ...this.state,
-            detectEdge: event.target.value,
+            isDetectingEdge: !this.state.isDetectingEdge,
         });
 
     render() {
-        const { markerFound, opacity, detectEdge } = this.state;
+        const { whiteImage, blackImage, image } = this.props;
+        const { markerFound, opacity, isDetectingEdge, detectOptions } = this.state;
         if (this.material) {
             this.material.opacity = opacity;
+            this.material.needsUpdate;
+            if (isDetectingEdge) {
+                    const alphaImage = detectEdge(image, detectOptions);
+                    const alphaTexture = new Texture(alphaImage);
+                    alphaTexture.needsUpdate = true;
+                    this.material.alphaMap = alphaTexture;
+                    this.material.map.image = blackImage;
+                    this.material.map.image.needsUpdate = true;
+                    this.material.map.needsUpdate = true;
+                    this.material.needsUpdate = true;
+            } else {
+                this.material.alphaMap = null;
+                const texture = new Texture(image);
+                texture.needsUpdate = true;
+                this.material.map = texture;
+                this.material.needsUpdate = true;
+            }
         }
 
         return (
@@ -168,9 +203,9 @@ class Sketch extends Component {
                 <button className="backButton btn" onClick={this.handleBack}>Back</button>
                 <Settings
                     opacity={opacity}
-                    detectEdge={detectEdge}
+                    isDetectingEdge={isDetectingEdge}
                     onOpacityChange={this.handleOpacityChange}
-                    onDetectEdgeChange={handleDetectEdgeChange}
+                    onDetectEdgeChange={this.handleDetectEdgeChange}
                 />
             </div>
         );
