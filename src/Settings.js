@@ -17,6 +17,15 @@ const styles = {
         padding: 10,
         width: '100%',
     },
+    detectOptions: {
+        display: 'flex',
+        flexFlow: 'row',
+        flexWrap: 'wrap',
+
+    },
+    detectOptionItem: {
+        minWidth: '150px',
+    }
 };
 
 class Settings extends Component {
@@ -51,53 +60,44 @@ class Settings extends Component {
 
         return (
             <div style={styles.modal}>
-                <div class="form-group" style={styles.modalItem} >
-                    <label for="opacity" >
-                        opacity
-                    </label>
-                    <input
-                        className="form-control"
-                        name="opacity"
-                        type="range"
-                        min="0"
-                        max="1"
-                        step="0.01"
-                        value={opacity}
-                        onChange={onOpacityChange}
-                    />
-                </div>
-                <div class="form-check" style={styles.modalItem} >
-                    <label for="isDetectingEdge" className="form-check-label">
+                { !isDetectingEdge &&
+                    <div class="form-group" style={styles.modalItem} >
+                        <label for="opacity" >
+                            opacity
+                        </label>
                         <input
-                            className="form-check-input"
-                            name="isDetectingEdge"
-                            type="checkbox"
-                            value={isDetectingEdge}
-                            onChange={onDetectEdgeChange}
-                        /> detect edge
-                    </label>
-                </div>
+                            className="form-control"
+                            name="opacity"
+                            type="range"
+                            min="0"
+                            max="1"
+                            step="0.01"
+                            value={opacity}
+                            onChange={onOpacityChange}
+                        />
+                    </div>
+                }
                 {
                     isDetectingEdge && (
-                        <div>
-                            <div class="form-group" style={styles.modalItem} >
+                        <div style={styles.detectOptions}>
+                            <div className="col" style={styles.detectOptionItem}>
                                 <label for="blur" >
-                                    blur
+                                    blur: {blur}
                                 </label>
                                 <input
                                     className="form-control"
                                     name="blur"
                                     type="range"
                                     min="0"
-                                    max="12"
+                                    max="4"
                                     step="1"
                                     value={blur}
                                     onChange={onBlurChange}
                                 />
                             </div>
-                            <div class="form-group" style={styles.modalItem} >
+                            <div className="col" style={styles.detectOptionItem}>
                                 <label for="lowTreshold" >
-                                    low treshold
+                                    low treshold: {lowTreshold}
                                 </label>
                                 <input
                                     className="form-control"
@@ -110,9 +110,9 @@ class Settings extends Component {
                                     onChange={onLowTresholdChange}
                                 />
                             </div>
-                            <div class="form-group" style={styles.modalItem} >
+                            <div className="col" style={styles.detectOptionItem}>
                                 <label for="highTreshold" >
-                                    high treshold
+                                    high treshold: {highTreshold}
                                 </label>
                                 <input
                                     className="form-control"
@@ -128,6 +128,17 @@ class Settings extends Component {
                         </div>
                     )
                 }
+                <div class="form-check" style={styles.modalItem} >
+                    <label for="isDetectingEdge" className="form-check-label">
+                        <input
+                            className="form-check-input"
+                            name="isDetectingEdge"
+                            type="checkbox"
+                            value={isDetectingEdge}
+                            onChange={onDetectEdgeChange}
+                        /> detect edge
+                    </label>
+                </div>
                 <button
                     className="btn btn-block"
                     onClick={this.handleClose}
