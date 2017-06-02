@@ -1,4 +1,37 @@
-.fileSelection {
-  text-align: center;
+.file-selection {
+  position: fixed;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-image: url('./assets/rose.jpg');
+  background-repeat: no-repeat;
+  background-size: cover;
+  background-position-x: 50%;
   padding-top: 15px;
+}
+
+.file-selection .title {
+  text-align: center;
+}
+
+.file-selection .hiro .marker {
+  text-align: center;
+}
+
+.file-selection .hiro .marker img {
+  margin-top: 1rem;
+  height: 5rem;
+  width: 5rem;
+  border: 5px solid white;
+}
+
+.file-selection .file-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    opacity: 0;
+    cursor: pointer;
 }
