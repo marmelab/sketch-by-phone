@@ -6,9 +6,9 @@ import initializeRenderer from './utils/initializeRenderer';
 import { initializeArToolkit, getMarker } from './utils/arToolkit';
 import './Sketch.css';
 import hiro from './assets/hiro.png';
-import pan from './assets/pan.jpg';
-import pinch from './assets/pinch.jpg';
-import rotate from './assets/rotate.jpg';
+import pan from './assets/pan.png';
+import pinch from './assets/pinch.png';
+import rotate from './assets/rotate.png';
 import Settings from './Settings';
 import detectEdge from './utils/detectEdge';
 
