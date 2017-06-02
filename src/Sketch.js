@@ -6,6 +6,9 @@ import initializeRenderer from './utils/initializeRenderer';
 import { initializeArToolkit, getMarker } from './utils/arToolkit';
 import './Sketch.css';
 import hiro from './assets/hiro.png';
+import pan from './assets/pan.png';
+import pinch from './assets/pinch.png';
+import rotate from './assets/rotate.png';
 import Settings from './Settings';
 import detectEdge from './utils/detectEdge';
 
@@ -13,6 +16,7 @@ const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene
 
 class Sketch extends Component {
     state = {
+        showTips: true,
         markerFound: false,
         opacity: 1,
         isDetectingEdge: false,
@@ -137,14 +141,15 @@ class Sketch extends Component {
         this.renderer.dispose();
     }
 
-    shouldComponentUpdate(nextProps, { markerFound, opacity, isDetectingEdge, blur, lowTreshold, highTreshold }) {
+    shouldComponentUpdate(nextProps, { markerFound, opacity, isDetectingEdge, blur, lowTreshold, highTreshold, showTips }) {
         if (
             markerFound !== this.state.markerFound ||
             opacity !== this.state.opacity ||
             isDetectingEdge !== this.state.isDetectingEdge ||
             blur !== this.state.blur ||
             lowTreshold !== this.state.lowTreshold ||
-            highTreshold !== this.state.highTreshold
+            highTreshold !== this.state.highTreshold ||
+            showTips !== this.state.showTips
         ) {
             return true;
         }
@@ -179,21 +184,27 @@ class Sketch extends Component {
             blur: event.target.value,
         });
 
-    handleLowTresholdChange = (event) => console.log(event.target.value) ||
+    handleLowTresholdChange = (event) =>
         this.setState({
             ...this.state,
             lowTreshold: event.target.value,
         });
 
-    handleHighTresholdChange = (event) => console.log(event.target.value) ||
+    handleHighTresholdChange = (event) =>
         this.setState({
             ...this.state,
             highTreshold: event.target.value,
         });
 
+    handleHideTips = () => console.log('hideTips') ||
+        this.setState({
+            ...this.state,
+            showTips: false,
+        });
+
     render() {
         const { whiteImage, blackImage, image } = this.props;
-        const { markerFound, opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
+        const { markerFound, showTips, opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
         if (this.material) {
             if (isDetectingEdge) {
                     this.material.opacity = 1;
@@ -223,6 +234,22 @@ class Sketch extends Component {
                         <div className="MarkerSearch">
                             Looking for Hiro Marker
                             <img alt="Hiro marker example" src={hiro} />
+                        </div>
+                    </div>
+                }
+                {markerFound && showTips &&
+                    <div className="tips" onClick={this.handleHideTips}>
+                        <div className="item">
+                            <img alt="How to move the image" src={pan} />
+                            <div className="text">Pan with your finger to drag the picture on the paper</div>
+                        </div>
+                        <div className="item">
+                            <img alt="How to zoom the image" src={pinch} />
+                            <div className="text">Pinch to zoom the picture in or out and fit the sheet</div>
+                        </div>
+                        <div className="item">
+                            <img alt="How to rotate the image" src={rotate} />
+                            <div className="text">Rotate your fingers to rotate the picture and orient it on the sheet</div>
                         </div>
                     </div>
                 }

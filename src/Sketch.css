@@ -1,4 +1,38 @@
 
+.tips {
+    margin-left: auto;
+    margin-right: auto;
+    max-width: 600px;
+    display: flex;
+    flex-direction: column;
+    position: absolute;
+    bottom: 5rem;
+    left: 1rem;
+    right: 1rem;
+    padding: 1rem;
+    background-color: rgba(255, 255, 255, 0.75);
+}
+
+.tips .item {
+    display: flex;
+    align-items: center;
+}
+
+@media (orientation: landscape) {
+    .tips {
+        flex-direction: row;
+    }
+
+    .tips .item {
+        flex-direction: column;
+        max-width: 200px;
+    }
+}
+
+.tips .item .text {
+    margin-left: 1rem;
+}
+
 .MarkerSearchContainer {
     position: absolute;
     bottom: 5rem;
