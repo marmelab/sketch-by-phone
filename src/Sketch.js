@@ -219,9 +219,11 @@ class Sketch extends Component {
             <div>
                 <canvas id="root" ref={this.storeRef} />
                 {!markerFound &&
-                    <div className="MarkerSearch">
-                        Looking for Hiro Marker
-                        <img alt="Hiro marker example" src={hiro} />
+                    <div className="MarkerSearchContainer">
+                        <div className="MarkerSearch">
+                            Looking for Hiro Marker
+                            <img alt="Hiro marker example" src={hiro} />
+                        </div>
                     </div>
                 }
                 <button className="backButton btn" onClick={this.handleBack}>Back</button>

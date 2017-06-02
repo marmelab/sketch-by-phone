@@ -1,16 +1,23 @@
+
+.MarkerSearchContainer {
+    position: absolute;
+    bottom: 5rem;
+    left: 0rem;
+    right: 0rem;
+    text-align: center;
+    padding: auto auto;
+}
+
 .MarkerSearch {
+    display: inline-block;
     color: red;
+    border-color: red;
+    border-width: 2px;
+    border-style: solid;
+    max-width: 200px;
     font-weight: bold;
     font-size: 1.5rem;
-    position: absolute;
-    bottom: 1rem;
-    left: 0rem;
-    width: 100%;
-    padding: 1rem 0.5rem;
-    text-align: center;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
+    padding: 10px;
 }
 
 
