@@ -15,9 +15,17 @@ class FileSelection extends Component {
         reader.readAsDataURL(event.target.files[0]);
     }
 
+    handleFileInputClick = () => {
+        this.fileInput.click();
+    }
+
     handleClick = () => {
         getImageDataFromDataUrl(image)
             .then(this.props.onFileSelected);
+    }
+
+    storeFileInputRef = node => {
+        this.fileInput = node;
     }
 
     render() {
@@ -38,12 +46,12 @@ class FileSelection extends Component {
                     <li>
                         Choose something to draw
                         <div className="form-group">
-                            <button htmlFor="file_input">
+                            <button className="btn btn-default btn-block btn-file-input" htmlFor="file_input" onClick={this.handleFileInputClick}>
                                 From your photo library
-                                <input text="hello" id="file_input" className="file-input" type="file" accept="image/*" onChange={this.handleChange} />
+                                <input ref={this.storeFileInputRef} text="hello" id="file_input" className="file-input" type="file" accept="image/*" onChange={this.handleChange} />
                             </button>
                         </div>
-                        <button onClick={this.handleClick}>Our drawing</button>
+                        <button className="btn btn-default btn-block" onClick={this.handleClick}>Our drawing</button>
                     </li>
                 </ol>
             </div>
