@@ -249,7 +249,7 @@ class Sketch extends Component {
                         </div>
                         <div className="item">
                             <img alt="How to rotate the image" src={rotate} />
-                            <div className="text">Rotate your finger to rotate the picture and orient it on the sheet</div>
+                            <div className="text">Rotate your fingers to rotate the picture and orient it on the sheet</div>
                         </div>
                     </div>
                 }
