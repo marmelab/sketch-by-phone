@@ -106,13 +106,35 @@ class Sketch extends Component {
     }
 
     renderMesh = () => {
-        const { pan: { x, z } } = this.state;
+        const { pan: { x, z }, opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
         this.mesh.position.x = x;
         this.mesh.position.z = z;
         this.mesh.rotation.z = this.state.rotation.z;
         this.mesh.scale.x = this.state.scale.x;
         this.mesh.scale.y = this.state.scale.y;
         this.mesh.needsUpdate = true;
+    }
+
+    renderMaterial = () => {
+        const { blackImage, image } = this.props;
+        const { opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
+        if (isDetectingEdge) {
+            this.material.opacity = 1;
+            const alphaImage = detectEdge(image, { blur, lowTreshold, highTreshold });
+            const alphaTexture = new Texture(alphaImage);
+            alphaTexture.needsUpdate = true;
+            this.material.alphaMap = alphaTexture;
+            this.material.map.image = blackImage;
+            this.material.map.image.needsUpdate = true;
+            this.material.map.needsUpdate = true;
+        } else {
+            this.material.opacity = opacity;
+            this.material.alphaMap = null;
+            const texture = new Texture(image);
+            texture.needsUpdate = true;
+            this.material.map = texture;
+        }
+        this.material.needsUpdate = true;
     }
 
     componentDidMount() {
@@ -246,30 +268,12 @@ class Sketch extends Component {
         });
 
     render() {
-        const { blackImage, image } = this.props;
         const { markerFound, showTips, opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
         if (this.mesh) {
             this.renderMesh();
         }
         if (this.material) {
-            if (isDetectingEdge) {
-                    this.material.opacity = 1;
-                    const alphaImage = detectEdge(image, { blur, lowTreshold, highTreshold });
-                    const alphaTexture = new Texture(alphaImage);
-                    alphaTexture.needsUpdate = true;
-                    this.material.alphaMap = alphaTexture;
-                    this.material.map.image = blackImage;
-                    this.material.map.image.needsUpdate = true;
-                    this.material.map.needsUpdate = true;
-                    this.material.needsUpdate = true;
-            } else {
-                this.material.opacity = opacity;
-                this.material.alphaMap = null;
-                const texture = new Texture(image);
-                texture.needsUpdate = true;
-                this.material.map = texture;
-                this.material.needsUpdate = true;
-            }
+            this.renderMaterial();
         }
 
         return (
