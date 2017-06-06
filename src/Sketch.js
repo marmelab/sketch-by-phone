@@ -1,6 +1,7 @@
 /* globals Hammer, THREE */
 /* eslint jsx-a11y/img-redundant-alt: off */
 import React, { Component } from 'react';
+import isEqual from 'lodash.isequal';
 
 import degToRad from './utils/degToRad';
 import initializeRenderer from './utils/initializeRenderer';
@@ -24,10 +25,95 @@ class Sketch extends Component {
         blur: 2,
         highTreshold: 20,
         lowTreshold: 50,
+        pan: {
+            startX: 1,
+            startZ: 2,
+            x: 1,
+            z: 2,
+        },
+        rotation: {
+            z: 0,
+        },
+        scale: {
+            x: 2,
+            y: 2,
+        }
     };
 
 
     renderer = null;
+
+    handlePan = (ev) => {
+        if (ev.type === 'panstart') {
+            this.setState({
+                ...this.state,
+                pan: {
+                    ...this.state.pan,
+                    startX: this.state.pan.x,
+                    startZ: this.state.pan.z,
+                },
+            });
+        }
+        this.setState({
+            ...this.state,
+            pan: {
+                ...this.state.pan,
+                x: this.state.pan.startX + ev.deltaX / 200,
+                z: this.state.pan.startZ + ev.deltaY / 200,
+            },
+        });
+    }
+
+    handlePinch = (ev) => {
+        if (ev.type === 'pinchstart') {
+            this.setState({
+                ...this.state,
+                scale: {
+                    ...this.state.scale,
+                    startX: this.state.scale.x,
+                    startY: this.state.scale.y,
+                },
+            });
+        }
+        this.setState({
+            ...this.state,
+            scale: {
+                ...this.state.scale,
+                x: this.state.scale.startX * ev.scale,
+                y: this.state.scale.startY * ev.scale,
+            },
+        });
+    }
+
+    handleRotate = (ev) => {
+        if (ev.type === 'rotatestart') {
+            this.setState({
+                ...this.state,
+                rotation: {
+                    ...this.state.rotation,
+                    start: this.state.rotation.z + degToRad(ev.rotation), // the first rotation is the angle between the two finger ignoring it.
+                },
+            });
+            return;
+        }
+        this.setState({
+            ...this.state,
+            rotation: {
+                ...this.state.rotation,
+                z: this.state.rotation.start - degToRad(ev.rotation),
+            },
+        });
+    }
+
+    renderMesh = () => {
+        const { pan: { x, z } } = this.state;
+        this.mesh.position.x = x;
+        this.mesh.position.z = z;
+        this.mesh.rotation.z = this.state.rotation.z;
+        this.mesh.scale.x = this.state.scale.x;
+        this.mesh.scale.y = this.state.scale.y;
+        this.mesh.needsUpdate = true;
+    }
 
     componentDidMount() {
         const { opacity } = this.state;
@@ -58,14 +144,10 @@ class Sketch extends Component {
             transparent: true,
         });
 
-        var mesh = new Mesh(geometry, this.material);
-        mesh.position.x = geometry.parameters.width * 2;
-        mesh.position.z = geometry.parameters.height;
-        mesh.rotation.x = - Math.PI / 2; // -90°
-        mesh.scale.x = 2;
-        mesh.scale.y = 2;
+        this.mesh = new Mesh(geometry, this.material);
+        this.mesh.rotation.x = - Math.PI / 2; // -90°
 
-        markerRoot.add(mesh);
+        markerRoot.add(this.mesh);
 
         // render the scene
         onRenderFcts.push(function(){
@@ -95,64 +177,27 @@ class Sketch extends Component {
         hammer.get('rotate').set({ enable: true });
         hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
 
-        let panStartX, panStartY;
+        hammer.on('panstart', this.handlePan);
 
-        hammer.on('panstart', function(ev) {
-            panStartX = mesh.position.x;
-            panStartY = mesh.position.z;
+        hammer.on('panmove', this.handlePan);
 
-            mesh.position.x += ev.deltaX / 200;
-            mesh.position.z += ev.deltaY / 200;
-        });
+        hammer.on('pinchstart', this.handlePinch);
 
-        hammer.on('panmove', function(ev) {
-            mesh.position.x = panStartX + ev.deltaX / 200;
-            mesh.position.z = panStartY + ev.deltaY / 200;
-        });
-
-        let pinchStartX, pinchStartY;
-
-        hammer.on('pinchstart', function(ev) {
-            pinchStartX = mesh.scale.x;
-            pinchStartY = mesh.scale.y;
-            mesh.scale.x = ev.scale;
-            mesh.scale.y = ev.scale;
-        });
-
-        hammer.on('pinch', function(ev) {
-            mesh.scale.x = pinchStartX * ev.scale;
-            mesh.scale.y = pinchStartY * ev.scale;
-        });
+        hammer.on('pinch', this.handlePinch);
 
         let rotateStart;
 
-        hammer.on('rotatestart', function(ev) {
-            rotateStart = mesh.rotation.z + degToRad(ev.rotation); // the first rotation is the angle between the two finger ignoring it.
-        });
+        hammer.on('rotatestart', this.handleRotate);
 
-        hammer.on('rotatemove', function(ev) {
-            mesh.rotation.z = rotateStart - degToRad(ev.rotation);
-        });
+        hammer.on('rotatemove', this.handleRotate);
     }
 
     componentWillUnmount() {
         this.renderer.dispose();
     }
 
-    shouldComponentUpdate(nextProps, { markerFound, opacity, isDetectingEdge, blur, lowTreshold, highTreshold, showTips }) {
-        if (
-            markerFound !== this.state.markerFound ||
-            opacity !== this.state.opacity ||
-            isDetectingEdge !== this.state.isDetectingEdge ||
-            blur !== this.state.blur ||
-            lowTreshold !== this.state.lowTreshold ||
-            highTreshold !== this.state.highTreshold ||
-            showTips !== this.state.showTips
-        ) {
-            return true;
-        }
-
-        return false;
+    shouldComponentUpdate(nextProps, state) {
+        return !isEqual(state, this.state);
     }
 
     storeRef = node => {
@@ -194,7 +239,7 @@ class Sketch extends Component {
             highTreshold: event.target.value,
         });
 
-    handleHideTips = () => console.log('hideTips') ||
+    handleHideTips = () =>
         this.setState({
             ...this.state,
             showTips: false,
@@ -203,6 +248,9 @@ class Sketch extends Component {
     render() {
         const { blackImage, image } = this.props;
         const { markerFound, showTips, opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
+        if (this.mesh) {
+            this.renderMesh();
+        }
         if (this.material) {
             if (isDetectingEdge) {
                     this.material.opacity = 1;
