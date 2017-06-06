@@ -1,4 +1,5 @@
 /* globals Hammer, THREE */
+/* eslint jsx-a11y/img-redundant-alt: off */
 import React, { Component } from 'react';
 
 import degToRad from './utils/degToRad';
@@ -48,9 +49,6 @@ class Sketch extends Component {
 
         const geometry = new PlaneGeometry(1, 1, 1);
         const texture = new Texture(this.props.image);
-        texture.needsUpdate = true;
-
-        const alphaTexture = new Texture(this.props.whiteImage);
         texture.needsUpdate = true;
 
         this.material = new MeshBasicMaterial({
@@ -203,7 +201,7 @@ class Sketch extends Component {
         });
 
     render() {
-        const { whiteImage, blackImage, image } = this.props;
+        const { blackImage, image } = this.props;
         const { markerFound, showTips, opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
         if (this.material) {
             if (isDetectingEdge) {
