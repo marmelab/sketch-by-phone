@@ -1,0 +1,2 @@
+global.THREE = {};
+global.THREEx = {};
