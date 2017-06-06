@@ -13,6 +13,7 @@ import pinch from './assets/pinch.png';
 import rotate from './assets/rotate.png';
 import Settings from './Settings';
 import detectEdge from './utils/detectEdge';
+import MoveControl from './MoveControl';
 
 const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, Texture } = THREE;
 
@@ -25,15 +26,11 @@ class Sketch extends Component {
         blur: 2,
         highTreshold: 20,
         lowTreshold: 50,
-        pan: {
-            startX: 1,
-            startZ: 2,
-            x: 1,
-            z: 2,
+        coord: {
+            x: 2,
+            z: 1,
         },
-        rotation: {
-            z: 0,
-        },
+        rotation: 0,
         scale: {
             x: 2,
             y: 2,
@@ -43,75 +40,28 @@ class Sketch extends Component {
 
     renderer = null;
 
-    handlePan = (ev) => {
-        if (ev.type === 'panstart') {
-            this.setState({
-                ...this.state,
-                pan: {
-                    ...this.state.pan,
-                    startX: this.state.pan.x,
-                    startZ: this.state.pan.z,
-                },
-            });
-        }
+    handleTranslateChange = ({ x, z }) => {
         this.setState({
             ...this.state,
-            pan: {
-                ...this.state.pan,
-                x: this.state.pan.startX + ev.deltaX / 200,
-                z: this.state.pan.startZ + ev.deltaY / 200,
-            },
-        });
-    }
-
-    handlePinch = (ev) => {
-        if (ev.type === 'pinchstart') {
-            this.setState({
-                ...this.state,
-                scale: {
-                    ...this.state.scale,
-                    startX: this.state.scale.x,
-                    startY: this.state.scale.y,
-                },
-            });
-        }
-        this.setState({
-            ...this.state,
-            scale: {
-                ...this.state.scale,
-                x: this.state.scale.startX * ev.scale,
-                y: this.state.scale.startY * ev.scale,
-            },
-        });
-    }
-
-    handleRotate = (ev) => {
-        if (ev.type === 'rotatestart') {
-            this.setState({
-                ...this.state,
-                rotation: {
-                    ...this.state.rotation,
-                    start: this.state.rotation.z + degToRad(ev.rotation), // the first rotation is the angle between the two finger ignoring it.
-                },
-            });
-            return;
-        }
-        this.setState({
-            ...this.state,
-            rotation: {
-                ...this.state.rotation,
-                z: this.state.rotation.start - degToRad(ev.rotation),
-            },
-        });
-    }
-
-    renderMesh = () => {
-        const { pan: { x, z }, opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
+            coord: { x, z },
+        })
         this.mesh.position.x = x;
         this.mesh.position.z = z;
-        this.mesh.rotation.z = this.state.rotation.z;
-        this.mesh.scale.x = this.state.scale.x;
-        this.mesh.scale.y = this.state.scale.y;
+        this.mesh.needsUpdate = true;
+    }
+
+    handleZoomChange = ({ x, y }) => {
+        this.setState({
+            ...this.state,
+            scale: { x, y },
+        })
+        this.mesh.scale.x = x;
+        this.mesh.scale.y = y;
+        this.mesh.needsUpdate = true;
+    }
+
+    handleRotationChange = (angle) => {
+        this.mesh.rotation.z = angle;
         this.mesh.needsUpdate = true;
     }
 
@@ -168,6 +118,10 @@ class Sketch extends Component {
 
         this.mesh = new Mesh(geometry, this.material);
         this.mesh.rotation.x = - Math.PI / 2; // -90°
+        this.mesh.position.x = 2;
+        this.mesh.position.z = 1;
+        this.mesh.scale.x = 2;
+        this.mesh.scale.y = 2;
 
         markerRoot.add(this.mesh);
 
@@ -192,26 +146,6 @@ class Sketch extends Component {
             });
         }
         requestAnimationFrame(animate);
-
-        const hammer = new Hammer(this.canvas);
-
-        hammer.get('pinch').set({ enable: true });
-        hammer.get('rotate').set({ enable: true });
-        hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
-
-        hammer.on('panstart', this.handlePan);
-
-        hammer.on('panmove', this.handlePan);
-
-        hammer.on('pinchstart', this.handlePinch);
-
-        hammer.on('pinch', this.handlePinch);
-
-        let rotateStart;
-
-        hammer.on('rotatestart', this.handleRotate);
-
-        hammer.on('rotatemove', this.handleRotate);
     }
 
     componentWillUnmount() {
@@ -268,16 +202,40 @@ class Sketch extends Component {
         });
 
     render() {
-        const { markerFound, showTips, opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
-        if (this.mesh) {
-            this.renderMesh();
-        }
+        const {
+            markerFound,
+            showTips,
+            opacity,
+            isDetectingEdge,
+            blur,
+            lowTreshold,
+            highTreshold,
+            coord: {
+                x: coordX,
+                z: coordZ,
+            },
+            scale: {
+                x: scaleX,
+                y: scaleY,
+            },
+            rotation,
+        } = this.state;
         if (this.material) {
             this.renderMaterial();
         }
-
         return (
             <div>
+                {this.canvas && <MoveControl
+                    canvas={this.canvas}
+                    coordX={coordX}
+                    coordZ={coordZ}
+                    scaleX={scaleX}
+                    scaleY={scaleY}
+                    rotation={rotation}
+                    onTranslateChange={this.handleTranslateChange}
+                    onZoomChange={this.handleZoomChange}
+                    onRotationChange={this.handleRotationChange}
+                /> }
                 <canvas id="root" ref={this.storeRef} />
                 {!markerFound &&
                     <div className="MarkerSearchContainer">
