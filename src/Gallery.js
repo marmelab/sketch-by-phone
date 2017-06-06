@@ -1,4 +1,6 @@
-import React, { Component } from 'react';
+import React from 'react';
+import './Gallery.css';
+import GalleryItem from './GalleryItem';
 
 const images = [
     require('./assets/drawing1.jpg'),
@@ -10,6 +12,11 @@ const images = [
     require('./assets/drawing7.jpg'),
 ];
 
-export const Gallery = () => (
-
+const Gallery = ({ onClose, onSelected }) => (
+    <div className="gallery">
+        <button className="btn btn-default btn-block" onClick={onClose}>Cancel</button>
+        {images.map(image => <GalleryItem image={image} onSelected={onSelected} />)}
+    </div>
 )
+
+export default Gallery;

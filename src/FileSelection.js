@@ -1,10 +1,14 @@
 import React, { Component } from 'react';
 import './FileSelection.css';
-import image from './assets/image.png';
 import getImageDataFromDataUrl from './utils/getImageDataFromDataUrl';
 import hiro from './assets/hiro.png';
+import Gallery from './Gallery';
 
 class FileSelection extends Component {
+    state = {
+        showGallery: false,
+    };
+
     handleChange = (event) => {
         var reader = new FileReader();
         reader.addEventListener('load', () => {
@@ -19,9 +23,16 @@ class FileSelection extends Component {
         this.fileInput.click();
     }
 
-    handleClick = () => {
-        getImageDataFromDataUrl(image)
-            .then(this.props.onFileSelected);
+    handleOpenGalleryClick = () => {
+        this.setState({ showGallery: true });
+    }
+
+    handleCloseGalleryClick = () => {
+        this.setState({ showGallery: false });
+    }
+
+    handleGalleryImageSelected = (image) => {
+        getImageDataFromDataUrl(image).then(this.props.onFileSelected);
     }
 
     storeFileInputRef = node => {
@@ -29,6 +40,12 @@ class FileSelection extends Component {
     }
 
     render() {
+        const { showGallery } = this.state;
+
+        if (showGallery) {
+            return <Gallery onClose={this.handleCloseGalleryClick} onSelected={this.handleGalleryImageSelected} />;
+        }
+
         return (
             <div className="file-selection container-fluid">
                 <h1 className="h6 title">Sketch anything you want using your phone as a guide</h1>
@@ -51,7 +68,7 @@ class FileSelection extends Component {
                                 <input ref={this.storeFileInputRef} text="hello" id="file_input" className="file-input" type="file" accept="image/*" onChange={this.handleChange} />
                             </button>
                         </div>
-                        <button className="btn btn-default btn-block" onClick={this.handleClick}>Our drawing</button>
+                        <button className="btn btn-default btn-block" onClick={this.handleOpenGalleryClick}>Our drawings</button>
                     </li>
                 </ol>
             </div>
