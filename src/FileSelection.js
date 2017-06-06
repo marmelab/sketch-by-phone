@@ -65,7 +65,7 @@ class FileSelection extends Component {
                         <div className="form-group">
                             <button className="btn btn-default btn-block btn-file-input" htmlFor="file_input" onClick={this.handleFileInputClick}>
                                 From your photo library
-                                <input ref={this.storeFileInputRef} text="hello" id="file_input" className="file-input" type="file" accept="image/*" onChange={this.handleChange} />
+                                <input ref={this.storeFileInputRef} id="file_input" className="file-input" type="file" accept="image/*" onChange={this.handleChange} />
                             </button>
                         </div>
                         <button className="btn btn-default btn-block" onClick={this.handleOpenGalleryClick}>Our drawings</button>
