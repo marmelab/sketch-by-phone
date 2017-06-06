@@ -9,4 +9,4 @@ build:
 	npm run build
 
 deploy: build
-	now ./build --public
+	now ./build --public --name sketch-by-phone
