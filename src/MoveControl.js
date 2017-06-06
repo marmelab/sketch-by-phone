@@ -4,7 +4,7 @@ import React, { Component } from 'react';
 
 import degToRad from './utils/degToRad';
 
-class SketchControl extends Component {
+export const moveControlFactory = Hammer => class MoveControl extends Component {
     state = {
         pan: {
             startX: 1,
@@ -19,26 +19,27 @@ class SketchControl extends Component {
         }
     }
 
-    componentWillMount() {
-        const { canvas } = this.props;
+    constructor(props) {
+        super(props);
+        const { canvas } = props;
 
-        const hammer = new Hammer(canvas);
+        this.hammer = new Hammer(canvas);
 
-        hammer.get('pinch').set({ enable: true });
-        hammer.get('rotate').set({ enable: true });
-        hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
+        this.hammer.get('pinch').set({ enable: true });
+        this.hammer.get('rotate').set({ enable: true });
+        this.hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
 
-        hammer.on('panstart', this.handlePan);
+        this.hammer.on('panstart', this.handlePan);
 
-        hammer.on('panmove', this.handlePan);
+        this.hammer.on('panmove', this.handlePan);
 
-        hammer.on('pinchstart', this.handlePinch);
+        this.hammer.on('pinchstart', this.handlePinch);
 
-        hammer.on('pinch', this.handlePinch);
+        this.hammer.on('pinch', this.handlePinch);
 
-        hammer.on('rotatestart', this.handleRotate);
+        this.hammer.on('rotatestart', this.handleRotate);
 
-        hammer.on('rotatemove', this.handleRotate);
+        this.hammer.on('rotatemove', this.handleRotate);
     }
 
     handlePan = (ev) => {
@@ -94,4 +95,4 @@ class SketchControl extends Component {
     }
 }
 
-export default SketchControl;
+export default moveControlFactory(global.Hammer);
