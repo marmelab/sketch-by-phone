@@ -4,11 +4,14 @@
   "private": true,
   "dependencies": {
     "jsfeat": "0.0.8",
-    "react": "^15.5.4",
-    "react-dom": "^15.5.4"
+    "react": "15.5.4",
+    "react-dom": "15.5.4"
   },
   "devDependencies": {
-    "react-scripts": "1.0.7"
+    "enzyme": "2.8.2",
+    "jest-enzyme": "3.2.0",
+    "react-scripts": "1.0.7",
+    "react-test-renderer": "15.5.4"
   },
   "scripts": {
     "start": "react-scripts start",
