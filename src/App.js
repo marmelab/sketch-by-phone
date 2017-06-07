@@ -1,4 +1,5 @@
 import React, { Component } from 'react';
+import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import FileSelection from './FileSelection';
 import Sketch from './Sketch';
 
@@ -14,12 +15,14 @@ class App extends Component {
     render() {
         const { image, whiteImage, blackImage } = this.state;
 
-        if (!image) {
-            return <FileSelection onFileSelected={this.handleFileSelected} />;
-        }
         return (
-            <Sketch image={image} whiteImage={whiteImage} blackImage={blackImage} />
-        );
+            <MuiThemeProvider>
+                <div>
+                    {!image && <FileSelection onFileSelected={this.handleFileSelected} />}
+                    {image && <Sketch image={image} whiteImage={whiteImage} blackImage={blackImage} />}
+                </div>
+            </MuiThemeProvider>
+        )
     }
 }
 
