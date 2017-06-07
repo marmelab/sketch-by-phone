@@ -3,13 +3,13 @@ import './Gallery.css';
 import GalleryItem from './GalleryItem';
 
 const defaultImages = [
-    require('./assets/drawing1.jpg'),
-    require('./assets/drawing2.jpg'),
-    require('./assets/drawing3.jpg'),
-    require('./assets/drawing4.jpg'),
-    require('./assets/drawing5.jpg'),
-    require('./assets/drawing6.jpg'),
-    require('./assets/drawing7.jpg'),
+    require('./assets/drawing1.png'),
+    require('./assets/drawing2.png'),
+    require('./assets/drawing3.png'),
+    require('./assets/drawing4.png'),
+    require('./assets/drawing5.png'),
+    require('./assets/drawing6.png'),
+    require('./assets/drawing7.png'),
 ];
 
 const Gallery = ({ images = defaultImages, onClose, onSelected }) => (
