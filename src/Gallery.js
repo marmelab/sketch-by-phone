@@ -14,9 +14,11 @@ const defaultImages = [
 ];
 
 const Gallery = ({ images = defaultImages, onClose, onSelected }) => (
-    <div className="gallery">
+    <div className="gallery-container">        
         <RaisedButton secondary fullWidth onClick={onClose} label="Cancel" />
-        {images.map(image => <GalleryItem key={image} image={image} onSelected={onSelected} />)}
+        <div className="gallery">        
+            {images.map(image => <GalleryItem key={image} image={image} onSelected={onSelected} />)}
+        </div>
     </div>
 )
 

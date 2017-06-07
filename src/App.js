@@ -3,6 +3,16 @@ import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
 import FileSelection from './FileSelection';
 import Sketch from './Sketch';
 
+const styles = {
+    container: {
+        position: 'fixed',
+        top: 0,
+        left: 0,
+        right: 0,
+        bottom: 0,
+    },
+};
+
 class App extends Component {
     state = {
         image: null,
@@ -17,7 +27,7 @@ class App extends Component {
 
         return (
             <MuiThemeProvider>
-                <div>
+                <div style={styles.container}>
                     {!image && <FileSelection onFileSelected={this.handleFileSelected} />}
                     {image && <Sketch image={image} whiteImage={whiteImage} blackImage={blackImage} />}
                 </div>
