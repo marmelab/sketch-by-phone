@@ -1,8 +1,8 @@
-/* globals Hammer, THREE */
+/* globals THREE */
 /* eslint jsx-a11y/img-redundant-alt: off */
 import React, { Component } from 'react';
+import isEqual from 'lodash.isequal';
 
-import degToRad from './utils/degToRad';
 import initializeRenderer from './utils/initializeRenderer';
 import { initializeArToolkit, getMarker } from './utils/arToolkit';
 import './Sketch.css';
@@ -12,6 +12,7 @@ import pinch from './assets/pinch.png';
 import rotate from './assets/rotate.png';
 import Settings from './Settings';
 import detectEdge from './utils/detectEdge';
+import MoveControl from './MoveControl';
 
 const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, Texture } = THREE;
 
@@ -24,10 +25,66 @@ class Sketch extends Component {
         blur: 2,
         highTreshold: 20,
         lowTreshold: 50,
+        coord: {
+            x: 2,
+            z: 1,
+        },
+        rotation: 0,
+        scale: {
+            x: 2,
+            y: 2,
+        }
     };
 
 
     renderer = null;
+
+    handleTranslateChange = ({ x, z }) => {
+        this.setState({
+            ...this.state,
+            coord: { x, z },
+        })
+        this.mesh.position.x = x;
+        this.mesh.position.z = z;
+        this.mesh.needsUpdate = true;
+    }
+
+    handleZoomChange = ({ x, y }) => {
+        this.setState({
+            ...this.state,
+            scale: { x, y },
+        })
+        this.mesh.scale.x = x;
+        this.mesh.scale.y = y;
+        this.mesh.needsUpdate = true;
+    }
+
+    handleRotationChange = (angle) => {
+        this.mesh.rotation.z = angle;
+        this.mesh.needsUpdate = true;
+    }
+
+    renderMaterial = () => {
+        const { blackImage, image } = this.props;
+        const { opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
+        if (isDetectingEdge) {
+            this.material.opacity = 1;
+            const alphaImage = detectEdge(image, { blur, lowTreshold, highTreshold });
+            const alphaTexture = new Texture(alphaImage);
+            alphaTexture.needsUpdate = true;
+            this.material.alphaMap = alphaTexture;
+            this.material.map.image = blackImage;
+            this.material.map.image.needsUpdate = true;
+            this.material.map.needsUpdate = true;
+        } else {
+            this.material.opacity = opacity;
+            this.material.alphaMap = null;
+            const texture = new Texture(image);
+            texture.needsUpdate = true;
+            this.material.map = texture;
+        }
+        this.material.needsUpdate = true;
+    }
 
     componentDidMount() {
         const { opacity } = this.state;
@@ -58,14 +115,14 @@ class Sketch extends Component {
             transparent: true,
         });
 
-        var mesh = new Mesh(geometry, this.material);
-        mesh.position.x = geometry.parameters.width * 2;
-        mesh.position.z = geometry.parameters.height;
-        mesh.rotation.x = - Math.PI / 2; // -90°
-        mesh.scale.x = 2;
-        mesh.scale.y = 2;
+        this.mesh = new Mesh(geometry, this.material);
+        this.mesh.rotation.x = - Math.PI / 2; // -90°
+        this.mesh.position.x = 2;
+        this.mesh.position.z = 1;
+        this.mesh.scale.x = 2;
+        this.mesh.scale.y = 2;
 
-        markerRoot.add(mesh);
+        markerRoot.add(this.mesh);
 
         // render the scene
         onRenderFcts.push(function(){
@@ -88,71 +145,14 @@ class Sketch extends Component {
             });
         }
         requestAnimationFrame(animate);
-
-        const hammer = new Hammer(this.canvas);
-
-        hammer.get('pinch').set({ enable: true });
-        hammer.get('rotate').set({ enable: true });
-        hammer.get('pan').set({ direction: Hammer.DIRECTION_ALL });
-
-        let panStartX, panStartY;
-
-        hammer.on('panstart', function(ev) {
-            panStartX = mesh.position.x;
-            panStartY = mesh.position.z;
-
-            mesh.position.x += ev.deltaX / 200;
-            mesh.position.z += ev.deltaY / 200;
-        });
-
-        hammer.on('panmove', function(ev) {
-            mesh.position.x = panStartX + ev.deltaX / 200;
-            mesh.position.z = panStartY + ev.deltaY / 200;
-        });
-
-        let pinchStartX, pinchStartY;
-
-        hammer.on('pinchstart', function(ev) {
-            pinchStartX = mesh.scale.x;
-            pinchStartY = mesh.scale.y;
-            mesh.scale.x = ev.scale;
-            mesh.scale.y = ev.scale;
-        });
-
-        hammer.on('pinch', function(ev) {
-            mesh.scale.x = pinchStartX * ev.scale;
-            mesh.scale.y = pinchStartY * ev.scale;
-        });
-
-        let rotateStart;
-
-        hammer.on('rotatestart', function(ev) {
-            rotateStart = mesh.rotation.z + degToRad(ev.rotation); // the first rotation is the angle between the two finger ignoring it.
-        });
-
-        hammer.on('rotatemove', function(ev) {
-            mesh.rotation.z = rotateStart - degToRad(ev.rotation);
-        });
     }
 
     componentWillUnmount() {
         this.renderer.dispose();
     }
 
-    shouldComponentUpdate(nextProps, { markerFound, opacity, isDetectingEdge, blur, lowTreshold, highTreshold, showTips }) {
-        if (
-            markerFound !== this.state.markerFound ||
-            opacity !== this.state.opacity ||
-            isDetectingEdge !== this.state.isDetectingEdge ||
-            blur !== this.state.blur ||
-            lowTreshold !== this.state.lowTreshold ||
-            highTreshold !== this.state.highTreshold ||
-            showTips !== this.state.showTips
-        ) {
-            return true;
-        }
-
-        return false;
+    shouldComponentUpdate(nextProps, state) {
+        return !isEqual(state, this.state);
     }
 
     storeRef = node => {
@@ -194,38 +194,47 @@ class Sketch extends Component {
             highTreshold: event.target.value,
         });
 
-    handleHideTips = () => console.log('hideTips') ||
+    handleHideTips = () =>
         this.setState({
             ...this.state,
             showTips: false,
         });
 
     render() {
-        const { blackImage, image } = this.props;
-        const { markerFound, showTips, opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
+        const {
+            markerFound,
+            showTips,
+            opacity,
+            isDetectingEdge,
+            blur,
+            lowTreshold,
+            highTreshold,
+            coord: {
+                x: coordX,
+                z: coordZ,
+            },
+            scale: {
+                x: scaleX,
+                y: scaleY,
+            },
+            rotation,
+        } = this.state;
         if (this.material) {
-            if (isDetectingEdge) {
-                    this.material.opacity = 1;
-                    const alphaImage = detectEdge(image, { blur, lowTreshold, highTreshold });
-                    const alphaTexture = new Texture(alphaImage);
-                    alphaTexture.needsUpdate = true;
-                    this.material.alphaMap = alphaTexture;
-                    this.material.map.image = blackImage;
-                    this.material.map.image.needsUpdate = true;
-                    this.material.map.needsUpdate = true;
-                    this.material.needsUpdate = true;
-            } else {
-                this.material.opacity = opacity;
-                this.material.alphaMap = null;
-                const texture = new Texture(image);
-                texture.needsUpdate = true;
-                this.material.map = texture;
-                this.material.needsUpdate = true;
-            }
+            this.renderMaterial();
         }
-
         return (
             <div>
+                {this.canvas && <MoveControl
+                    canvas={this.canvas}
+                    coordX={coordX}
+                    coordZ={coordZ}
+                    scaleX={scaleX}
+                    scaleY={scaleY}
+                    rotation={rotation}
+                    onTranslateChange={this.handleTranslateChange}
+                    onZoomChange={this.handleZoomChange}
+                    onRotationChange={this.handleRotationChange}
+                /> }
                 <canvas id="root" ref={this.storeRef} />
                 {!markerFound &&
                     <div className="MarkerSearchContainer">
