@@ -5,7 +5,6 @@ import expect, { createSpy } from 'expect';
 import { moveControlFactory } from './MoveControl';
 
 describe('MoveControl', () => {
-    global.Hammer = null;
     const MoveControl = moveControlFactory(createSpy().andReturn({
         get: createSpy().andReturn({ set: createSpy() }),
         on: createSpy(),

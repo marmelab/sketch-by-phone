@@ -1,9 +1,8 @@
-/* globals Hammer, THREE */
+/* globals THREE */
 /* eslint jsx-a11y/img-redundant-alt: off */
 import React, { Component } from 'react';
 import isEqual from 'lodash.isequal';
 
-import degToRad from './utils/degToRad';
 import initializeRenderer from './utils/initializeRenderer';
 import { initializeArToolkit, getMarker } from './utils/arToolkit';
 import './Sketch.css';

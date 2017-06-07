@@ -1,6 +1,6 @@
 /* globals Hammer */
 
-import React, { Component } from 'react';
+import { Component } from 'react';
 
 import degToRad from './utils/degToRad';
 
@@ -95,4 +95,4 @@ export const moveControlFactory = Hammer => class MoveControl extends Component 
     }
 }
 
-export default moveControlFactory(global.Hammer);
+export default moveControlFactory(Hammer);
