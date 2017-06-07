@@ -1,4 +1,8 @@
 import React, { Component } from 'react';
+import RaisedButton from 'material-ui/RaisedButton';
+import Checkbox from 'material-ui/Checkbox';
+import Slider from 'material-ui/Slider';
+import Subheader from 'material-ui/Subheader';
 
 const styles = {
     openButton: {
@@ -12,10 +16,14 @@ const styles = {
         left: 0,
         right: 0,
         backgroundColor: 'white',
+        padding: '0.5rem',
     },
     modalItem: {
-        padding: 10,
-        width: '100%',
+        padding: '0.5rem',
+    },
+    slider: {
+        marginTop: 0,
+        marginBottom: '0.5rem',
     },
     detectOptions: {
         display: 'flex',
@@ -33,16 +41,22 @@ class Settings extends Component {
         open: false,
     };
 
-    handleOpen = () =>
-        this.setState({ isOpen: true });
+    handleOpen = () => {
+        setTimeout(() => {
+            this.setState({ isOpen: true });
+        }, 500);
+    }
 
-    handleClose = () =>
-        this.setState({ isOpen: false });
+    handleClose = () => {
+        setTimeout(() => {        
+            this.setState({ isOpen: false });
+        }, 500);
+    }
 
     render() {
         const { isOpen } = this.state;
         if (!isOpen) {
-            return <button className="btn" style={styles.openButton} onClick={this.handleOpen}>settings</button>
+            return <RaisedButton style={styles.openButton} onClick={this.handleOpen} label="Settings" />
         }
 
         const {
@@ -61,19 +75,13 @@ class Settings extends Component {
         return (
             <div style={styles.modal}>
                 { !isDetectingEdge &&
-                    <div class="form-group" style={styles.modalItem} >
-                        <label for="opacity" >
-                            opacity
-                        </label>
-                        <input
-                            className="form-control"
+                    <div style={styles.modalItem}>
+                        <Subheader>Opacity: {opacity}</Subheader>
+                        <Slider
                             name="opacity"
-                            type="range"
-                            min="0"
-                            max="1"
-                            step="0.01"
                             value={opacity}
                             onChange={onOpacityChange}
+                            sliderStyle={styles.slider}
                         />
                     </div>
                 }
@@ -81,68 +89,49 @@ class Settings extends Component {
                     isDetectingEdge && (
                         <div style={styles.detectOptions}>
                             <div className="col" style={styles.detectOptionItem}>
-                                <label for="blur" >
-                                    blur: {blur}
-                                </label>
-                                <input
-                                    className="form-control"
+                                <Subheader>blur: {blur}</Subheader>
+                                <Slider
                                     name="blur"
-                                    type="range"
-                                    min="0"
-                                    max="4"
-                                    step="1"
                                     value={blur}
                                     onChange={onBlurChange}
+                                    sliderStyle={styles.slider}
                                 />
                             </div>
                             <div className="col" style={styles.detectOptionItem}>
-                                <label for="lowTreshold" >
-                                    low treshold: {lowTreshold}
-                                </label>
-                                <input
-                                    className="form-control"
+                                <Subheader>low treshold: {lowTreshold}</Subheader>
+                                <Slider
                                     name="lowTreshold"
-                                    type="range"
-                                    min="1"
-                                    max="127"
-                                    step="1"
                                     value={lowTreshold}
                                     onChange={onLowTresholdChange}
+                                    sliderStyle={styles.slider}
                                 />
                             </div>
                             <div className="col" style={styles.detectOptionItem}>
-                                <label for="highTreshold" >
-                                    high treshold: {highTreshold}
-                                </label>
-                                <input
-                                    className="form-control"
+                                <Subheader>high treshold: {highTreshold}</Subheader>
+                                <Slider
                                     name="highTreshold"
-                                    type="range"
-                                    min="1"
-                                    max="127"
-                                    step="1"
                                     value={highTreshold}
                                     onChange={onHighTresholdChange}
+                                    sliderStyle={styles.slider}
                                 />
                             </div>
                         </div>
                     )
                 }
-                <div class="form-check" style={styles.modalItem} >
-                    <label for="isDetectingEdge" className="form-check-label">
-                        <input
-                            className="form-check-input"
-                            name="isDetectingEdge"
-                            type="checkbox"
-                            checked={isDetectingEdge ? 'checked' : ''}
-                            onChange={onDetectEdgeChange}
-                        /> detect edge
-                    </label>
-                </div>
-                <button
-                    className="btn btn-block"
+                <Checkbox
+                    name="isDetectingEdge"
+                    type="checkbox"
+                    checked={isDetectingEdge}
+                    onCheck={onDetectEdgeChange}
+                    label="detect edge"
+                />
+
+                <RaisedButton
+                    primary
+                    fullWidth
                     onClick={this.handleClose}
-                >close</button>
+                    label="close"
+                />
             </div>
         );
     }

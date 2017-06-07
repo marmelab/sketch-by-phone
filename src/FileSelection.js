@@ -3,6 +3,7 @@ import './FileSelection.css';
 import getImageDataFromDataUrl from './utils/getImageDataFromDataUrl';
 import hiro from './assets/hiro.png';
 import Gallery from './Gallery';
+import RaisedButton from 'material-ui/RaisedButton';
 
 class FileSelection extends Component {
     state = {
@@ -24,11 +25,15 @@ class FileSelection extends Component {
     }
 
     handleOpenGalleryClick = () => {
-        this.setState({ showGallery: true });
+        setTimeout(() => {
+            this.setState({ showGallery: true });
+        }, 500);
     }
 
     handleCloseGalleryClick = () => {
-        this.setState({ showGallery: false });
+        setTimeout(() => {
+            this.setState({ showGallery: false });
+        }, 500);
     }
 
     handleGalleryImageSelected = (image) => {
@@ -63,12 +68,11 @@ class FileSelection extends Component {
                     <li>
                         Choose something to draw
                         <div className="form-group">
-                            <button className="btn btn-default btn-block btn-file-input" htmlFor="file_input" onClick={this.handleFileInputClick}>
-                                From your photo library
+                            <RaisedButton secondary fullWidth htmlFor="file_input" onTouchTap={this.handleFileInputClick} label="From your photo library">
                                 <input ref={this.storeFileInputRef} id="file_input" className="file-input" type="file" accept="image/*" onChange={this.handleChange} />
-                            </button>
+                            </RaisedButton>
                         </div>
-                        <button className="btn btn-default btn-block" onClick={this.handleOpenGalleryClick}>Our drawings</button>
+                        <RaisedButton secondary fullWidth onTouchTap={this.handleOpenGalleryClick} label="Our drawings" />
                     </li>
                 </ol>
             </div>
