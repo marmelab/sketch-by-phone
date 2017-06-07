@@ -6,7 +6,7 @@ const { ArMarkerControls, ArToolkitContext, ArToolkitSource } = THREEx;
 
 export function initializeArToolkit(renderer, camera, onRenderFcts) {
     ArToolkitContext.baseURL = '../';
-    
+
     const arToolkitSource = new ArToolkitSource({ sourceType : 'webcam' });
 
     arToolkitSource.init(() => {
@@ -22,8 +22,8 @@ export function initializeArToolkit(renderer, camera, onRenderFcts) {
         cameraParametersUrl: cameraData,
         detectionMode: 'mono',
         maxDetectionRate: 30,
-        canvasWidth: 80 * 3,
-        canvasHeight: 60 * 3,
+        canvasWidth: 800,
+        canvasHeight: 600,
     });
 
     arToolkitContext.init(() => {
