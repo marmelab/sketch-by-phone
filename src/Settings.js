@@ -93,6 +93,7 @@ class Settings extends Component {
                                 <Slider
                                     name="blur"
                                     value={blur}
+                                    max={4}
                                     onChange={onBlurChange}
                                     sliderStyle={styles.slider}
                                 />
@@ -102,6 +103,7 @@ class Settings extends Component {
                                 <Slider
                                     name="lowTreshold"
                                     value={lowTreshold}
+                                    max={127}
                                     onChange={onLowTresholdChange}
                                     sliderStyle={styles.slider}
                                 />
@@ -111,6 +113,7 @@ class Settings extends Component {
                                 <Slider
                                     name="highTreshold"
                                     value={highTreshold}
+                                    max={127}
                                     onChange={onHighTresholdChange}
                                     sliderStyle={styles.slider}
                                 />
