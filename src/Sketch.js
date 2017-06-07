@@ -2,6 +2,7 @@
 /* eslint jsx-a11y/img-redundant-alt: off */
 import React, { Component } from 'react';
 import isEqual from 'lodash.isequal';
+import RaisedButton from 'material-ui/RaisedButton';
 
 import initializeRenderer from './utils/initializeRenderer';
 import { initializeArToolkit, getMarker } from './utils/arToolkit';
@@ -159,15 +160,17 @@ class Sketch extends Component {
         this.canvas = node;
     }
 
-    handleOpacityChange = event =>
+    handleOpacityChange = (event, opacity) =>
         this.setState({
             ...this.state,
-            opacity: event.target.value,
+            opacity,
         });
 
     handleBack = () => {
-        // We can't reset the AR.js created elements (no dispose, reset or destroy methods available)
-        window.location.reload();
+        setTimeout(() => {
+            // We can't reset the AR.js created elements (no dispose, reset or destroy methods available)
+            window.location.reload();
+        }, 500);
     }
 
     handleDetectEdgeChange = () =>
@@ -176,22 +179,22 @@ class Sketch extends Component {
             isDetectingEdge: !this.state.isDetectingEdge,
         });
 
-    handleBlurChange = (event) =>
+    handleBlurChange = (event, blur) =>
         this.setState({
             ...this.state,
-            blur: event.target.value,
+            blur,
         });
 
-    handleLowTresholdChange = (event) =>
+    handleLowTresholdChange = (event, lowTreshold) =>
         this.setState({
             ...this.state,
-            lowTreshold: event.target.value,
+            lowTreshold,
         });
 
-    handleHighTresholdChange = (event) =>
+    handleHighTresholdChange = (event, highTreshold) =>
         this.setState({
             ...this.state,
-            highTreshold: event.target.value,
+            highTreshold,
         });
 
     handleHideTips = () =>
@@ -260,7 +263,7 @@ class Sketch extends Component {
                         </div>
                     </div>
                 }
-                <button className="backButton btn" onClick={this.handleBack}>Back</button>
+                <RaisedButton className="backButton" onClick={this.handleBack} label="Back" />
                 <Settings
                     opacity={opacity}
                     blur={blur}

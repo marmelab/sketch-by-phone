@@ -5,22 +5,3 @@
     padding: 0.5rem;
     position: relative;
 }
-
-.btn-image {
-    box-sizing: border-box;
-    border: 1px solid black;
-    height: 10rem;
-    width: 10rem;
-    margin: 0.5rem 0;
-    position: relative;
-    padding: 0;
-}
-
-.btn-image:hover {
-    border: 2px solid black;
-}
-
-.btn-image img {
-    height: 100%;
-    width: 100%;
-}

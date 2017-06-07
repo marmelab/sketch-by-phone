@@ -1,6 +1,7 @@
 import React from 'react';
 import './Gallery.css';
 import GalleryItem from './GalleryItem';
+import RaisedButton from 'material-ui/RaisedButton';
 
 const defaultImages = [
     require('./assets/drawing1.png'),
@@ -14,8 +15,8 @@ const defaultImages = [
 
 const Gallery = ({ images = defaultImages, onClose, onSelected }) => (
     <div className="gallery">
-        <button className="btn btn-default btn-block" onClick={onClose}>Cancel</button>
-        {images.map(image => <GalleryItem index={image} image={image} onSelected={onSelected} />)}
+        <RaisedButton secondary fullWidth onClick={onClose} label="Cancel" />
+        {images.map(image => <GalleryItem key={image} image={image} onSelected={onSelected} />)}
     </div>
 )
 
