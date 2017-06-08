@@ -1,8 +1,18 @@
 /* globals Hammer */
 
-import { Component } from 'react';
+import React, { Component } from 'react';
 
 import degToRad from './utils/degToRad';
+
+const styles = {
+    container: {
+        position: 'fixed',
+        top: 0,
+        bottom: 0,
+        left: 0,
+        right: 0,
+    }
+}
 
 export const moveControlFactory = Hammer => class MoveControl extends Component {
     state = {
@@ -19,11 +29,8 @@ export const moveControlFactory = Hammer => class MoveControl extends Component 
         }
     }
 
-    constructor(props) {
-        super(props);
-        const { canvas } = props;
-
-        this.hammer = new Hammer(canvas);
+    componentDidMount() {
+        this.hammer = new Hammer(this.div);
 
         this.hammer.get('pinch').set({ enable: true });
         this.hammer.get('rotate').set({ enable: true });
@@ -90,8 +97,16 @@ export const moveControlFactory = Hammer => class MoveControl extends Component 
         }
         onRotationChange(this.state.rotation.start - degToRad(ev.rotation));
     }
+
+    storeRef = node => {
+        this.div = node;
+    }
+
     render() {
-        return null;
+        return <div
+            style={styles.container}
+            ref={this.storeRef}
+        ></div>;
     }
 }
 

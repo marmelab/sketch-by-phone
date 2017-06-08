@@ -4,18 +4,14 @@ import React, { Component } from 'react';
 import isEqual from 'lodash.isequal';
 import RaisedButton from 'material-ui/RaisedButton';
 
-import initializeRenderer from './utils/initializeRenderer';
-import { initializeArToolkit, getMarker } from './utils/arToolkit';
 import './Sketch.css';
 import hiro from './assets/hiro.png';
 import pan from './assets/pan.png';
 import pinch from './assets/pinch.png';
 import rotate from './assets/rotate.png';
 import Settings from './Settings';
-import detectEdge from './utils/detectEdge';
+import SketchRenderer from './SketchRenderer';
 import MoveControl from './MoveControl';
-
-const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, Texture } = THREE;
 
 class Sketch extends Component {
     state = {
@@ -37,120 +33,7 @@ class Sketch extends Component {
         }
     };
 
-
     renderer = null;
-
-    handleTranslateChange = ({ x, z }) => {
-        this.setState({
-            ...this.state,
-            coord: { x, z },
-        })
-        this.mesh.position.x = x;
-        this.mesh.position.z = z;
-        this.mesh.needsUpdate = true;
-    }
-
-    handleZoomChange = ({ x, y }) => {
-        this.setState({
-            ...this.state,
-            scale: { x, y },
-        })
-        this.mesh.scale.x = x;
-        this.mesh.scale.y = y;
-        this.mesh.needsUpdate = true;
-    }
-
-    handleRotationChange = (angle) => {
-        this.mesh.rotation.z = angle;
-        this.mesh.needsUpdate = true;
-    }
-
-    renderMaterial = () => {
-        const { blackImage, image } = this.props;
-        const { opacity, isDetectingEdge, blur, lowTreshold, highTreshold } = this.state;
-        if (isDetectingEdge) {
-            this.material.opacity = 1;
-            const alphaImage = detectEdge(image, { blur, lowTreshold, highTreshold });
-            const alphaTexture = new Texture(alphaImage);
-            alphaTexture.needsUpdate = true;
-            this.material.alphaMap = alphaTexture;
-            this.material.map.image = blackImage;
-            this.material.map.image.needsUpdate = true;
-            this.material.map.needsUpdate = true;
-        } else {
-            this.material.opacity = opacity;
-            this.material.alphaMap = null;
-            const texture = new Texture(image);
-            texture.needsUpdate = true;
-            this.material.map = texture;
-        }
-        this.material.needsUpdate = true;
-    }
-
-    componentDidMount() {
-        const { opacity } = this.state;
-        const renderer = this.renderer = initializeRenderer(this.canvas);
-
-        const scene = new Scene();
-        const camera = new Camera();
-        scene.add(camera);
-
-        const markerRoot = new Group();
-        scene.add(markerRoot);
-        const onRenderFcts = [];
-        const arToolkitContext = initializeArToolkit(renderer, camera, onRenderFcts);
-        const marker = getMarker(arToolkitContext, markerRoot);
-
-        marker.addEventListener('markerFound', () => {
-            this.setState({ markerFound: true });
-        });
-
-        const geometry = new PlaneGeometry(1, 1, 1);
-        const texture = new Texture(this.props.image);
-        texture.needsUpdate = true;
-
-        this.material = new MeshBasicMaterial({
-            map: texture,
-            opacity,
-            side: DoubleSide,
-            transparent: true,
-        });
-
-        this.mesh = new Mesh(geometry, this.material);
-        this.mesh.rotation.x = - Math.PI / 2; // -90°
-        this.mesh.position.x = 2;
-        this.mesh.position.z = 1;
-        this.mesh.scale.x = 2;
-        this.mesh.scale.y = 2;
-
-        markerRoot.add(this.mesh);
-
-        // render the scene
-        onRenderFcts.push(function(){
-            renderer.render(scene, camera);
-        });
-
-        // run the rendering loop
-        var lastTimeMsec = null;
-
-        function animate(nowMsec) {
-            // keep looping
-            requestAnimationFrame(animate);
-            // measure time
-            lastTimeMsec = lastTimeMsec || nowMsec - 1000 / 60;
-            const deltaMsec = Math.min(200, nowMsec - lastTimeMsec);
-            lastTimeMsec = nowMsec;
-            // call each update function
-            onRenderFcts.forEach(onRenderFct => {
-                onRenderFct(deltaMsec / 1000, nowMsec / 1000);
-            });
-        }
-        requestAnimationFrame(animate);
-    }
-
-    componentWillUnmount() {
-        this.renderer.dispose();
-    }
 
     shouldComponentUpdate(nextProps, state) {
         return !isEqual(state, this.state);
@@ -158,6 +41,27 @@ class Sketch extends Component {
 
     storeRef = node => {
         this.canvas = node;
+    }
+
+    handleTranslateChange = ({ x, z }) => {
+        this.setState({
+            ...this.state,
+            coord: { x, z },
+        });
+    }
+
+    handleZoomChange = ({ x, y }) => {
+        this.setState({
+            ...this.state,
+            scale: { x, y },
+        });
+    }
+
+    handleRotationChange = (rotation) => {
+        this.setState({
+            ...this.state,
+            rotation,
+        });
     }
 
     handleOpacityChange = (event, opacity) =>
@@ -203,6 +107,12 @@ class Sketch extends Component {
             showTips: false,
         });
 
+    handleMarkerFound = () =>
+        this.setState({
+            ...this.state,
+            markerFound: true,
+        });
+
     render() {
         const {
             markerFound,
@@ -222,12 +132,35 @@ class Sketch extends Component {
             },
             rotation,
         } = this.state;
-        if (this.material) {
-            this.renderMaterial();
-        }
+
+        const { image, blackImage } = this.props;
+
         return (
             <div>
-                {this.canvas && <MoveControl
+                <SketchRenderer
+                    coordX={coordX}
+                    coordZ={coordZ}
+                    scaleX={scaleX}
+                    scaleY={scaleY}
+                    rotation={rotation}
+                    opacity={opacity}
+                    isDetectingEdge={isDetectingEdge}
+                    blur={blur}
+                    lowTreshold={lowTreshold}
+                    highTreshold={highTreshold}
+                    image={image}
+                    blackImage={blackImage}
+                    onMarkerFound={this.handleMarkerFound}
+                />
+                {!markerFound &&
+                    <div className="MarkerSearchContainer">
+                        <div className="MarkerSearch">
+                            Looking for Hiro Marker
+                            <img alt="Hiro marker example" src={hiro} />
+                        </div>
+                    </div>
+                }
+                {markerFound && <MoveControl
                     canvas={this.canvas}
                     coordX={coordX}
                     coordZ={coordZ}
@@ -238,15 +171,6 @@ class Sketch extends Component {
                     onZoomChange={this.handleZoomChange}
                     onRotationChange={this.handleRotationChange}
                 /> }
-                <canvas id="root" ref={this.storeRef} />
-                {!markerFound &&
-                    <div className="MarkerSearchContainer">
-                        <div className="MarkerSearch">
-                            Looking for Hiro Marker
-                            <img alt="Hiro marker example" src={hiro} />
-                        </div>
-                    </div>
-                }
                 {markerFound && showTips &&
                     <div className="tips" onClick={this.handleHideTips}>
                         <div className="item">
