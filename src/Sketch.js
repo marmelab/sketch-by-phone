@@ -1,4 +1,3 @@
-/* globals THREE */
 /* eslint jsx-a11y/img-redundant-alt: off */
 import React, { Component } from 'react';
 import isEqual from 'lodash.isequal';
