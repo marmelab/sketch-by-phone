@@ -38,10 +38,6 @@ class Sketch extends Component {
         return !isEqual(state, this.state);
     }
 
-    storeRef = node => {
-        this.canvas = node;
-    }
-
     handleTranslateChange = ({ x, z }) => {
         this.setState({
             ...this.state,
@@ -160,7 +156,6 @@ class Sketch extends Component {
                     </div>
                 }
                 {markerFound && <MoveControl
-                    canvas={this.canvas}
                     coordX={coordX}
                     coordZ={coordZ}
                     scaleX={scaleX}
