@@ -1,3 +1,4 @@
+/* eslint jsx-a11y/img-redundant-alt: off */
 import React from 'react';
 import pan from './assets/pan.png';
 import pinch from './assets/pinch.png';
