@@ -1,9 +1,72 @@
 import React, { Component } from 'react';
-import './FileSelection.css';
 import getImageDataFromDataUrl from './utils/getImageDataFromDataUrl';
 import hiro from './assets/hiro.png';
+import rose from './assets/rose.jpg';
 import Gallery from './Gallery';
 import RaisedButton from 'material-ui/RaisedButton';
+
+const styles = {
+    container: {
+        minHeight: '100%',
+        position: 'absolute',
+        top: 0,
+        left: 0,
+        right: 0,
+        backgroundImage: `url(${rose})`,
+        backgroundRepeat: 'no-repeat',
+        backgroundSize: 'cover',
+        backgroundPositionX: '50%',
+        paddingTop: 100,
+        paddingLeft: 10,
+        paddingRight: 10,
+        fontSize: '1.2rem',
+    },
+
+    list: {
+        paddingRight: 40,
+    },
+
+    listItem: {
+        paddingBottom: 15,
+    },
+
+    title: {
+        fontSize: '1.2rem',
+        textAlign: 'center',
+        fontWeight: 'bold',
+    },
+
+    a: {
+        textDecoration: 'underline',
+    },
+
+    hiroMarker: {
+        textAlign: 'center',
+    },
+
+    btnFileInput: {
+        marginTop: 15,
+        marginBottom: 15,
+    },
+
+    hiroMarkerImg: {
+        marginTop: '1rem',
+        height: '5rem',
+        width: '5rem',
+        border: '5px solid white',
+    },
+
+    fileInput: {
+        display: 'none',
+    },
+
+    hr: {
+        border: 0,
+        borderTop: '1px solid black',
+        marginBottom: '1rem',
+        marginTop: '1rem',
+    }
+};
 
 class FileSelection extends Component {
     state = {
@@ -52,24 +115,28 @@ class FileSelection extends Component {
         }
 
         return (
-            <div className="file-selection container-fluid">
-                <h1 className="h6 title">Sketch anything you want using your phone as a guide</h1>
-                <hr className="my-4" />
-                <ol>
-                    <li className="hiro">
+            <div style={styles.container}>
+                <h1 style={styles.title}>Sketch anything you want using your phone as a guide</h1>
+                <hr style={styles.hr} />
+                <ol style={styles.list}>
+                    <li style={styles.listItem}>
                         <div>
-                            Print a <a href={hiro}>hiro marker</a>
+                            Print a <a style={styles.a} href={hiro}>hiro marker</a>
                         </div>
-                        <div className="marker"><a href={hiro}><img alt="Hiro marker example" src={hiro} /></a></div>
+                        <div style={styles.hiroMarker}>
+                            <a style={styles.a} href={hiro}>
+                                <img style={styles.hiroMarkerImg} alt="Hiro marker example" src={hiro} />
+                            </a>
+                        </div>
                     </li>
-                    <li>
+                    <li style={styles.listItem}>
                         Put it on a sheet of paper
                     </li>
-                    <li>
+                    <li style={styles.listItem}>
                         Choose something to draw
-                        <div className="form-group">
-                            <RaisedButton secondary fullWidth htmlFor="file_input" onTouchTap={this.handleFileInputClick} label="From your photo library">
-                                <input ref={this.storeFileInputRef} id="file_input" className="file-input" type="file" accept="image/*" onChange={this.handleChange} />
+                        <div>
+                            <RaisedButton style={styles.btnFileInput} secondary fullWidth htmlFor="file_input" onTouchTap={this.handleFileInputClick} label="From your photo library">
+                                <input ref={this.storeFileInputRef} id="file_input" style={styles.fileInput} type="file" accept="image/*" onChange={this.handleChange} />
                             </RaisedButton>
                         </div>
                         <RaisedButton secondary fullWidth onTouchTap={this.handleOpenGalleryClick} label="Our drawings" />
