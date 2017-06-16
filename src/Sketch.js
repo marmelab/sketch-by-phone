@@ -3,15 +3,20 @@ import React, { Component } from 'react';
 import isEqual from 'lodash.isequal';
 import RaisedButton from 'material-ui/RaisedButton';
 
-import './Sketch.css';
-import hiro from './assets/hiro.png';
-import pan from './assets/pan.png';
-import pinch from './assets/pinch.png';
-import rotate from './assets/rotate.png';
 import Settings from './Settings';
 import SketchRenderer from './SketchRenderer';
 import MoveControl from './MoveControl';
+import MarkerSearch from './MarkerSearch';
+import Tips from './Tips';
 
+const styles = {
+    backButton: {
+        zIndex: 1000,
+        position: 'absolute',
+        right: '1rem',
+        top: '1rem',
+    }
+}
 class Sketch extends Component {
     state = {
         showTips: true,
@@ -38,33 +43,6 @@ class Sketch extends Component {
         return !isEqual(state, this.state);
     }
 
-    handleTranslateChange = ({ x, z }) => {
-        this.setState({
-            ...this.state,
-            coord: { x, z },
-        });
-    }
-
-    handleZoomChange = ({ x, y }) => {
-        this.setState({
-            ...this.state,
-            scale: { x, y },
-        });
-    }
-
-    handleRotationChange = (rotation) => {
-        this.setState({
-            ...this.state,
-            rotation,
-        });
-    }
-
-    handleOpacityChange = (event, opacity) =>
-        this.setState({
-            ...this.state,
-            opacity,
-        });
-
     handleBack = () => {
         setTimeout(() => {
             // We can't reset the AR.js created elements (no dispose, reset or destroy methods available)
@@ -72,41 +50,25 @@ class Sketch extends Component {
         }, 500);
     }
 
-    handleDetectEdgeChange = () =>
-        this.setState({
-            ...this.state,
-            isDetectingEdge: !this.state.isDetectingEdge,
-        });
+    handleTranslateChange = ({ x, z }) => this.setState({ coord: { x, z } });
 
-    handleBlurChange = (event, blur) =>
-        this.setState({
-            ...this.state,
-            blur,
-        });
+    handleZoomChange = ({ x, y }) => this.setState({ scale: { x, y } });
 
-    handleLowTresholdChange = (event, lowTreshold) =>
-        this.setState({
-            ...this.state,
-            lowTreshold,
-        });
+    handleRotationChange = (rotation) => this.setState({ rotation });
 
-    handleHighTresholdChange = (event, highTreshold) =>
-        this.setState({
-            ...this.state,
-            highTreshold,
-        });
+    handleOpacityChange = (event, opacity) => this.setState({ opacity });
 
-    handleHideTips = () =>
-        this.setState({
-            ...this.state,
-            showTips: false,
-        });
+    handleDetectEdgeChange = () => this.setState({ isDetectingEdge: !this.state.isDetectingEdge });
 
-    handleMarkerFound = () =>
-        this.setState({
-            ...this.state,
-            markerFound: true,
-        });
+    handleBlurChange = (event, blur) => this.setState({ blur });
+
+    handleLowTresholdChange = (event, lowTreshold) => this.setState({ lowTreshold });
+
+    handleHighTresholdChange = (event, highTreshold) => this.setState({ highTreshold });
+
+    handleHideTips = () => this.setState({ showTips: false });
+
+    handleMarkerFound = () => this.setState({ markerFound: true });
 
     render() {
         const {
@@ -147,14 +109,7 @@ class Sketch extends Component {
                     blackImage={blackImage}
                     onMarkerFound={this.handleMarkerFound}
                 />
-                {!markerFound &&
-                    <div className="MarkerSearchContainer">
-                        <div className="MarkerSearch">
-                            Looking for Hiro Marker
-                            <img alt="Hiro marker example" src={hiro} />
-                        </div>
-                    </div>
-                }
+                {!markerFound && <MarkerSearch />}
                 {markerFound && <MoveControl
                     coordX={coordX}
                     coordZ={coordZ}
@@ -165,23 +120,8 @@ class Sketch extends Component {
                     onZoomChange={this.handleZoomChange}
                     onRotationChange={this.handleRotationChange}
                 /> }
-                {markerFound && showTips &&
-                    <div className="tips" onClick={this.handleHideTips}>
-                        <div className="item">
-                            <img alt="How to move the image" src={pan} />
-                            <div className="text">Pan with your finger to drag the picture on the paper</div>
-                        </div>
-                        <div className="item">
-                            <img alt="How to zoom the image" src={pinch} />
-                            <div className="text">Pinch to zoom the picture in or out and fit the sheet</div>
-                        </div>
-                        <div className="item">
-                            <img alt="How to rotate the image" src={rotate} />
-                            <div className="text">Rotate your fingers to rotate the picture and orient it on the sheet</div>
-                        </div>
-                    </div>
-                }
-                <RaisedButton className="backButton" onClick={this.handleBack} label="Back" />
+                {markerFound && showTips && <Tips onHide={this.handleHideTips} />}
+                <RaisedButton style={styles.backButton} onClick={this.handleBack} label="Back" />
                 <Settings
                     opacity={opacity}
                     blur={blur}

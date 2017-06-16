@@ -29,11 +29,20 @@ const styles = {
         display: 'flex',
         flexFlow: 'row',
         flexWrap: 'wrap',
-
     },
     detectOptionItem: {
-        minWidth: '150px',
-    }
+        boxSizing: 'border-box',
+        width: '50%',
+        padding: '0 0.5rem',
+    },
+    detectOptionItemFull: {
+        boxSizing: 'border-box',
+        width: '100%',
+        padding: '0 0.5rem',
+    },
+    detectEdges: {
+        marginBottom: '1rem',
+    },
 };
 
 class Settings extends Component {
@@ -88,7 +97,7 @@ class Settings extends Component {
                 {
                     isDetectingEdge && (
                         <div style={styles.detectOptions}>
-                            <div className="col" style={styles.detectOptionItem}>
+                            <div style={styles.detectOptionItemFull}>
                                 <Subheader>blur: {blur}</Subheader>
                                 <Slider
                                     name="blur"
@@ -98,7 +107,7 @@ class Settings extends Component {
                                     sliderStyle={styles.slider}
                                 />
                             </div>
-                            <div className="col" style={styles.detectOptionItem}>
+                            <div style={styles.detectOptionItem}>
                                 <Subheader>low treshold: {lowTreshold}</Subheader>
                                 <Slider
                                     name="lowTreshold"
@@ -108,7 +117,7 @@ class Settings extends Component {
                                     sliderStyle={styles.slider}
                                 />
                             </div>
-                            <div className="col" style={styles.detectOptionItem}>
+                            <div style={styles.detectOptionItem}>
                                 <Subheader>high treshold: {highTreshold}</Subheader>
                                 <Slider
                                     name="highTreshold"
@@ -127,6 +136,7 @@ class Settings extends Component {
                     checked={isDetectingEdge}
                     onCheck={onDetectEdgeChange}
                     label="detect edge"
+                    style={styles.detectEdges}
                 />
 
                 <RaisedButton

@@ -1,7 +1,5 @@
 /* globals THREE, requestAnimationFrame */
-
 import React, { Component } from 'react';
-
 import initializeRenderer from './utils/initializeRenderer';
 import { initializeArToolkit, getMarker } from './utils/arToolkit';
 import detectEdge from './utils/detectEdge';
@@ -10,7 +8,6 @@ export const sketchRendererFactory = ({ THREE, initializeArToolkit, initializeRe
     const { Camera, DoubleSide, Group, Mesh, MeshBasicMaterial, PlaneGeometry, Scene, Texture } = THREE;
 
     return class SketchRenderer extends Component {
-
         componentDidMount() {
             const {
                 opacity,
