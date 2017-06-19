@@ -1,5 +1,11 @@
 # sketch-by-phone
 
+A proof-of-concept of Augmented Reality with HTML5 using [AR.js](https://jeromeetienne.github.io/AR.js).
+
+[Demo](https://sketch-by-phone.now.sh/) - [Article](https://marmelab.com/blog/2017/06/19/augmented-reality-html5.html)
+
+[![Watch the video](https://i.vimeocdn.com/video/639172331.webp?mw=800&mh=450)](https://vimeo.com/221006212)
+
 ## Installation
 
 ```sh
